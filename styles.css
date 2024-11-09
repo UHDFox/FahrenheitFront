@@ -1,0 +1,171 @@
+/* Основные стили */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Заголовок */
+
+.header {
+    background-color: #4B9CD3; /* Цвет фона заголовка */
+    padding: 10px;
+    border-radius: 10px;
+}
+.a {
+    background-color: #4B9CD3; /* Цвет фона заголовка */
+    color: #4B9CD3
+}
+
+.logo {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.site-title {
+    margin: 0;
+    color: white; /* Цвет текста заголовка */
+}
+
+/* Блок логина */
+
+.login-block {
+    background-color: #F9F9F9; /* Цвет фона блока логина */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    align-items: left;
+}
+
+.input-field {
+    width: 100%;
+    padding: 3px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.submit-button {
+    padding: 10px 35px;
+    background-color: #4B9CD3; /* Цвет кнопки входа */
+    color: white; /* Цвет текста на кнопке */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.register-link {
+    margin-left: 25px;
+    margin-right: 15px;
+    color: #4B9CD3; /* Цвет ссылки на регистрацию */
+    text-decoration: none;
+}
+
+/* Навигационная панель */
+
+.nav-table {
+    background-color: #3B8BB2; /* Цвет фона навигационной панели */
+}
+
+.nav-button {
+    background-color: #5A9DD1; /* Цвет кнопок навигации */
+    color: white; /* Цвет текста на кнопках навигации */
+    border: none;
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+/* Сайдбар */
+
+.sidebar {
+    background-color: #4B9CD3; /* Цвет фона сайдбара */
+    border-radius: 10px;
+}
+
+.nav-list {
+    list-style-type: none;
+    padding: 5px;
+    background-color: #3B8BB2;
+    border-radius: 10px;
+}
+
+.nav-list li {
+    margin: 10px 0; /* Уменьшите отступы, если нужно */
+    color: white; 
+    width: 100%;
+}
+
+/* Основное содержимое */
+
+.product-box {
+    margin: 15px;
+    border: 1px solid #4B9CD3; /* Цвет границы блока продукта */
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+
+.product-box:hover {
+    transform: scale(1.05);
+}
+
+.product-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.large-product-image {
+    width: 90%;
+    height: auto;
+    display: block;
+}
+
+/* Реклама */
+
+.ads-container {
+    margin-top: 20px;
+    background-color: #4B9CD3;
+    border-radius: 10px;
+}
+
+.ad-image {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    border-radius: 10px;
+    margin: 10px 0;
+    transition: transform 0.3s;
+}
+
+.ad-image:hover {
+    transform: scale(1.05);
+}
+
+/* Подвал */
+
+.footer {
+    background-color: #4B9CD3; /* Цвет фона подвала */
+    padding: 20px;
+    text-align: center;
+    color: white; /* Цвет текста в подвале */
+}
+
+.register-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4B9CD3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}

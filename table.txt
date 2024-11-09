@@ -1,0 +1,33 @@
+<!-- Третий ряд с одним большим изображением -->
+                    <tr>
+                        <td colspan="2" align="center" class="product-box">
+                            <img src="source/plumbersale2.jpg" class="large-product-image" alt="Йооуу Марио"/>
+                        </td>
+                    </tr>
+
+<td align="center" class="product-box">
+                            <img src="source/ironmantoilet.jpg" class="product-image" alt="Йооуу Марио"/>
+                            <strong class="product-label">Лидер продаж!</strong>
+                            <p>Супер невероятный товар!</p>
+                        </td>
+    
+                        <td align="center" class="product-box">
+                            <table width="100%" height="100%">
+                                <tr>
+                                    <td align="center" class="product-box">
+                                        <img src="source/lilgrevatel1.jpg" class="product-image" alt="Йооуу Марио"/>
+                                    </td>
+                                    <td align="center" class="product-box">
+                                        <img src="source/lilgrevatel2.jpg" class="product-image" alt="Йооуу Марио"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" class="product-box">
+                                        <img src="source/lilgrevatel3.webp" class="product-image" alt="Йооуу Марио"/>
+                                    </td>
+                                    <td align="center" class="product-box">
+                                        <img src="source/lilgrevatel4.jpg" class="product-image" alt="Йооуу Марио"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>

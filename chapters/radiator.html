@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список радиаторов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        #radiatorsList {
+            display: none; /* Скрыто по умолчанию */
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .radiator-image {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .pagination {
+            text-align: center;
+        }
+        #pageCounter {
+            font-size: 18px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Список радиаторов</h1>
+    
+    <!-- Кнопка для отображения списка радиаторов -->
+    <button onclick="GetRadiatorsList()">Показать радиаторы</button>
+
+    <!-- Секция с радиаторами -->
+    <div id="radiatorsList">
+        <ul id="list"></ul>
+        
+        <!-- Пагинация -->
+        <div class="pagination">
+            <button id="PrevPageButton" onclick="GetPrevPage()" disabled>Предыдущая страница</button>
+            <span id="PageCounter">1</span>
+            <button id="NextPageButton" onclick="GetNextPage()" disabled>Следующая страница</button>
+        </div>
+    </div>
+
+    <script>
+        // Конфигурация для API
+        const config = {
+            apiUrl: 'http://localhost:5000/api'  // URL API для радиаторов
+        };
+
+        let offset = { a: 0 };  // Смещение для пагинации
+        let limit = { limit: 5 };  // Количество элементов на странице
+        let pageCounter = { count: 1 };  // Счетчик текущей страницы
+        let isLoading = false;  // Признак загрузки данных
+
+        // Функция для отображения списка радиаторов
+        async function GetRadiatorsList() {
+            const radiatorsListContainer = document.getElementById("radiatorsList");
+
+            // Переключение видимости списка
+            radiatorsListContainer.style.display = radiatorsListContainer.style.display === "none" || radiatorsListContainer.style.display === "" ? "block" : "none";
+
+            // Сброс пагинации
+            offset.a = 0;
+            pageCounter.count = 1;
+            document.getElementById("PageCounter").innerHTML = pageCounter.count;
+
+            await fetchRadiators();  // Получение первоначального списка радиаторов
+        }
+
+        // Функция для загрузки радиаторов с API
+        async function fetchRadiators() {
+            if (isLoading) return;  // Проверка, если идет загрузка, чтобы не выполнять несколько запросов
+            isLoading = true;  // Устанавливаем флаг загрузки
+
+            try {
+                // Выполняем запрос к API с учетом offset и limit
+                const response = await fetch(`${config.apiUrl}/Radiator?offset=${offset.a}&limit=${limit.limit}`);
+
+                // Проверка на успешность запроса
+                if (!response.ok) {
+                    throw new Error(`Ошибка сервера: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Очистка списка перед добавлением новых данных
+                document.getElementById('list').innerHTML = "";
+
+                // Если есть радиаторы, добавляем их в список
+                if (data.list.length > 0) {
+                    data.list.forEach(item => {
+                        addToList(item);  // Добавляем элемент в список
+                    });
+                } else {
+                    // Если нет радиаторов, отображаем сообщение
+                    document.getElementById('list').innerHTML = "<li>Радиаторы не найдены.</li>";
+                }
+
+                // Обновляем кнопки навигации (предыдущая и следующая страницы)
+                document.getElementById("PrevPageButton").disabled = offset.a === 0;  // Отключаем кнопку, если мы на первой странице
+                document.getElementById("NextPageButton").disabled = data.list.length < limit.limit;  // Отключаем кнопку, если данных меньше лимита (следующей страницы нет)
+            } catch (error) {
+                console.error("Ошибка при получении данных:", error);
+                document.getElementById('list').innerHTML = "<li>Произошла ошибка при загрузке данных. Попробуйте позже.</li>";
+
+                // Отключаем кнопку следующей страницы, если ошибка
+                document.getElementById("NextPageButton").disabled = true;
+            } finally {
+                // Обновляем счетчик текущей страницы
+                updatePageCounter();
+
+                isLoading = false;  // Сбрасываем флаг загрузки
+            }
+        }
+
+        // Функция для добавления элемента в список
+        function addToList(data) {
+            const listItem = document.createElement('li');  // Создаем новый элемент списка
+            listItem.innerHTML = `
+                <strong>${data.name}</strong><br>
+                <strong>Цена:</strong> ${data.price} руб.<br>
+                <strong>Мощность обогрева:</strong> ${data.heatedValue} Вт<br>
+                <strong>Материал:</strong> ${data.material}<br>
+                <img src="http://localhost:5000${data.imagePath}" alt="Image of ${data.name}" class="radiator-image">
+                <a href="radiatorDetails.html?id=${data.id}">Подробнее</a>
+            `;
+            document.getElementById('list').appendChild(listItem);  // Добавляем элемент в список
+        }
+
+        // Функция для перехода к следующей странице
+        async function GetNextPage() {
+            if (!isLoading) {  // Если не идет загрузка
+                offset.a += limit.limit;  // Увеличиваем смещение для следующей страницы
+                pageCounter.count += 1;  // Увеличиваем счетчик страницы
+                await fetchRadiators();  // Загружаем следующую страницу радиаторов
+            }
+        }
+
+        // Функция для перехода на предыдущую страницу
+        async function GetPrevPage() {
+            if (!isLoading && offset.a > 0) {  // Если не идет загрузка и не на первой странице
+                offset.a -= limit.limit;  // Уменьшаем смещение для предыдущей страницы
+                pageCounter.count -= 1;  // Уменьшаем счетчик страницы
+                await fetchRadiators();  // Загружаем предыдущую страницу радиаторов
+            }
+        }
+
+        // Функция для обновления отображения текущей страницы
+        function updatePageCounter() {
+            document.getElementById("PageCounter").innerHTML = pageCounter.count;  // Обновляем счетчик страницы
+        }
+
+        // Открываем список радиаторов
+        window.GetRadiatorsList = GetRadiatorsList;
+        // Обработчики для кнопок пагинации
+        window.GetPrevPage = GetPrevPage;
+        window.GetNextPage = GetNextPage;
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Скидки - Fahrenheit</title>
+    <style>
+        body {
+            margin: 0; /* Убираем отступы по умолчанию */
+            padding: 0; /* Убираем внутренние отступы */
+        }
+        .banner {
+            width: 100%; /* Ширина баннера на всю страницу */
+            border: 10px double gainsboro; /* Границы баннера */
+            background-color: white; /* Фоновый цвет баннера */
+            padding: 20px; /* Внутренние отступы для баннера */
+            text-align: center; /* Выравнивание текста по центру */
+        }
+    </style>
+</head>
+<body>
+
+<table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" bgcolor="#ff8000">
+    <tr>
+        <td width="20%" align="center"><img src="source/logo.png" alt="Логотип"/></td>
+        <td align="center"><h1>Фаренгейт</h1></td>
+        <td width="20%">
+            <table cellpadding="5" bgcolor="#FFA500" width="100%">
+                <tr>
+                    <td align="right"><input type="text" value="login"></td>
+                </tr>
+                <tr>
+                    <td align="right"><input type="password" value="password"></td>
+                </tr>
+                <tr>
+                    <td align="center"><input type="submit" value="sign in">&nbsp;<a href="#">регистрация</a></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+<!-- Баннер -->
+<div class="banner">
+    <strong style="display: block; margin-top: 10px;">Скидки до 50%!</strong>
+    <p>Успейте воспользоваться нашими специальными предложениями!</p>
+    
+</div>
+
+<table border="0" width="100%" cellpadding="5" align="center">
+    <tr>
+        <td align="center"><a href="#">Раздел1</a></td>
+        <td align="center"><a href="#">Раздел 2</a></td>
+        <td align="center"><a href="#">Раздел 3</a></td>
+        <td align="center"><a href="#">Раздел 4</a></td>
+    </tr>
+</table>
+<br>
+<table border="0" width="100%" cellpadding="5" align="center">
+    <tr>
+        <td width="20%" valign="top" align="center" bgcolor="#ff8000">
+            <a href="sales.html">Ссылка 1</a><br>
+            <a href="#">Ссылка 2</a>
+        </td>
+        <td>
+            <h1 align="center">Скидки на продукцию</h1>
+            <p>
+                Здесь представлены товары со скидкой до 50%! Не упустите возможность приобрести качественную продукцию по сниженным ценам.
+            </p>
+
+            <!-- Здесь можно разместить товары со скидкой -->
+            <table border="0" width="100%" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td align="center" style="border: 10px double gainsboro; padding: 20px; background-color: white;">
+                        <img src="source/sales 1.jpg" style="width: 75%; height: auto; max-width: 500px;" alt="Скидка на товар 1"/>
+                        <strong style="display: block; margin-top: 10px;">Товар со скидкой!</strong>
+                        <p>Описание товара со скидкой.</p>
+                    </td>
+                    <td align="center" style="border: 10px double gainsboro; padding: 1px; background-color: white;">
+                        <img src="source/sales2.jpg" style="width: 75%; height: auto; max-width: 500px;" alt="Скидка на товар 2"/>
+                        <strong style="display: block; margin-top: 10px;">Товар со скидкой!</strong>
+                        <p>Описание товара со скидкой.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td width="20%" valign="top" align="center" bgcolor="#ff8000">
+            <strong>ПОИСК</strong>
+            <br><input type="text" style="margin-bottom: 5px;" value=""></br>
+            <input type="button" style="font-weight: bold;" value="поиск"> 
+            <br></br>
+            <br>Блок 1</br>
+            <br>Блок 2</br>
+            <br>Блок 3</br>
+            <br><br>
+            (Примечание - дополнительная информация)
+        </td>
+    </tr>
+</table>
+</body>
+</html>

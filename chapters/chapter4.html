@@ -4,6 +4,51 @@
     <meta charset="UTF-8">
     <title>Сантехника</title>
     <link href="../styles.css" rel="stylesheet" type="text/css">
+    <style>
+        /* Стиль для попапа */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 65%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+    
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+    
+        .popup-image {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+        }
+    
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    
+        .popup-close:hover {
+            background: darkred;
+        }
+    </style>
 </head>
 <body>
     <table width="100%" align="center" class="header">
@@ -95,55 +140,20 @@
                 
 
                 <table width="100%">
-                    <tr>
-                        
-                        <td align="center" class="product-box">
-                            <a href="tovar1.html">
-                                <img src="chapter_sources/santekh1.jpg" href="tovar1.html"alt="Смеситель Ideal Standard Ceraline для ванны" class="product-image"> </a>
-                            <strong>Смеситель Ideal Standard Ceraline для ванны BC199AA</strong>
-                            <p>Хромированный смеситель для ванны</p>
-                            <p>Цена: 7,499 руб.</p>
-                        </td>
-                        <td align="center" class="product-box">
-                            <a href="tovar2.html">
-                            <img src="chapter_sources/santekh2.jpeg" alt="Душевой уголок Loranto CS-8005S" style = "width:65%" class="product-image"></a>
-                            <strong>Душевой уголок Loranto CS-8005S</strong>
-                            <p>Размеры: 80x80x195 см, поддон 13 см</p>
-                            <p>Цена: 18,990 руб.</p>
-                        </td>
-                        <td align="center" class="product-box">
-                            <a href="tovar3.html">
-                            <img src="chapter_sources/santekh6.jpeg" alt="Душевой шланг Grohe Silverflex Longlife 125 см" style = "width:110%" class="product-image"></a>
-                            <strong>Переключатель душ-излив VIDIMA</strong>
-                            <p>для B1023, B2030, B2074,</p>
-                            <p>Цена: 2,125 руб.</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center" class="product-box">
-                            <a href="tovar4.html">
-                            <img src="chapter_sources/santekh3.jpg" alt="Смеситель Grohe Eurosmart для раковины" class="product-image"></a>
-                            <strong>Смеситель Grohe Eurosmart 2021 для раковины</strong>
-                            <p>Хром, для раковины</p>
-                            <p>Цена: 6,870 руб.</p>
-                        </td>
-                        <td align="center" class="product-box">
-                            <a href="tovar5.html">
-                            <img src="chapter_sources/santekh4.jpg" alt="Душевой шланг Grohe Silverflex Longlife 125 см" style = "width:110%" class="product-image"></a>
-                            <strong>Душевой шланг Grohe Silverflex Longlife 125 см</strong>
-                            <p>Хром, длина 125 см</p>
-                            <p>Цена: 1,790 руб.</p>
-                        </td>
-                        <td align="center" class="product-box">
-                            <a href="tovar6.html">
-                            <img src="chapter_sources/santekh5.jpg" alt="Душевой шланг Grohe Silverflex Longlife 125 см" style = "width:110%" class="product-image"></a>
-                            <strong>Запорный вентиль Kludi E2 (хром) 498150575</strong>
-                            <p>Латунь</p>
-                            <p>Цена: 10, 710 руб.</p>
-                        </td>
-                        
-                    </tr>
-                </table>
+                    <table class="product-box" id="fireplaceProducts">
+                    
+                    </table>
+                    
+                    <div id="fireplacesList">
+                        <div id="fireplacesContainer"></div>
+                    
+                        <!-- Пагинация -->
+                        <div class="pagination">
+                            <button id="PrevPageButton" onclick="getPrevPage()" disabled>Предыдущая страница</button>
+                            <span id="PageCounter">1</span>
+                            <button id="NextPageButton" onclick="getNextPage()" disabled>Следующая страница</button>
+                        </div>
+                    </div>
                 
             </td>
     <!--Ьаннер правый -->
@@ -181,33 +191,189 @@
 
 <!-- JavaScript для поиска -->
 <script>
-
-
-function searchText() {
-    // Получаем введенный текст
-    let input = document.getElementById('searchInput').value.toLowerCase();
-    let mainContent = document.getElementById('mainContent');
-
-    // Убираем предыдущую подсветку
-    let cleanedContent = mainContent.innerHTML.replace(/<mark>(.*?)<\/mark>/g, '$1');
-
-    // Если поле ввода пустое, восстанавливаем текст без подсветки
-    if (input.length === 0) {
-        mainContent.innerHTML = cleanedContent;
-        return; // Завершаем функцию
-    }
-
-    // Создаем регулярное выражение для поиска введенного текста
-    let regex = new RegExp(`(${input})`, 'gi'); // 'g' - глобальный поиск, 'i' - не учитываем регистр
-
-    // Подсвечиваем введенный текст
-    let highlightedContent = cleanedContent.replace(regex, '<mark>$1</mark>');
+    const config = {
+        apiUrl: 'http://localhost:5000/api'  // URL API для помп
+    };
     
-    // Обновляем содержимое
-    mainContent.innerHTML = highlightedContent;
-}
-
-
-</script>
+    let offset = 0;  // Смещение для пагинации
+    const limit = 4;  // Количество элементов на странице
+    let pageCounter = 1;  // Счетчик текущей страницы
+    let isLoading = false;  // Признак загрузки данных
+    
+    // Функция для загрузки помп с API
+    async function fetchfireplaces() {
+        if (isLoading) return;  // Если уже идет загрузка, не делать новый запрос
+        isLoading = true;  // Устанавливаем флаг загрузки
+    
+        try {
+            // Выполняем запрос к API с учетом offset и limit
+            const response = await fetch(`${config.apiUrl}/Fireplace?offset=${offset}&limit=${limit}`);
+    
+            if (!response.ok) {
+                throw new Error('Ошибка сервера');
+            }
+    
+            const data = await response.json();
+    
+            // Очистка контейнера перед добавлением новых данных
+            const container = document.getElementById('fireplacesContainer');
+            container.innerHTML = ''; // Очищаем контейнер перед добавлением
+    
+            if (data.list.length > 0) {
+                // Добавляем радиаторы в таблицу
+                data.list.forEach(fireplace => {
+                    addfireplaceToList(fireplace);  // Добавляем радиатор в список
+                });
+            } else {
+                container.innerHTML = '<p>Водонагреватели не найдены.</p>';
+            }
+    
+            // Обновление состояния кнопок пагинации
+            document.getElementById("PrevPageButton").disabled = offset === 0;
+            document.getElementById("NextPageButton").disabled = data.list.length < limit;
+    
+        } catch (error) {
+            console.error('Ошибка при загрузке данных:', error);
+            document.getElementById('fireplacesContainer').innerHTML = '<p>Произошла ошибка при загрузке данных.</p>';
+        } finally {
+            document.getElementById("PageCounter").innerText = pageCounter;  // Обновляем счетчик страниц
+            isLoading = false;  // Сбрасываем флаг загрузки
+        }
+    }
+        
+    // Функция для добавления помп в список
+    function addfireplaceToList(fireplace) {
+        const table = document.querySelector('#fireplaceProducts'); // Получаем таблицу
+    
+        // Проверка на существование таблицы
+        if (!table) {
+            console.error('Таблица с ID не найдена!');
+            return;
+        }
+    
+        let row = table.querySelector('tr:last-child'); // Получаем последнюю строку
+    
+        // Проверяем, если в текущей строке меньше двух ячеек, добавляем радиатор в эту строку
+        if (row && row.children.length < 2) {
+            const cell = createfireplaceCell(fireplace);  // Создаем ячейку для радиатора
+            row.appendChild(cell);  // Добавляем ячейку в текущую строку
+        } else {
+            // Если в текущей строке уже два радиатора, создаем новую строку
+            row = document.createElement('tr');
+            table.appendChild(row);  // Добавляем новую строку в таблицу
+    
+            const cell = createfireplaceCell(fireplace);  // Создаем ячейку для радиатора
+            row.appendChild(cell);  // Добавляем ячейку в новую строку
+        }
+    }
+    
+    // Функция для создания ячейки с радиатором
+    function createfireplaceCell(fireplace) {
+        const cell = document.createElement('td');
+        cell.align = 'center'; // Выравнивание по центру
+        cell.classList.add('product-box'); // Используем тот же класс для стилизации
+    
+        // Наполняем ячейку данными о радиаторе
+        cell.innerHTML = `
+            <div class="product-box">
+                <img src="http://localhost:5000${fireplace.imagePath}" class="product-image" alt="Image of ${fireplace.name}">
+            </div>
+            <strong class="product-label">${fireplace.name}</strong>
+            <p><strong>Цена:</strong> ${fireplace.price} руб.</p>
+            <p><strong>Мощность нагрева:</strong> ${fireplace.heatedValue} Вт</p>
+            <p><strong>Материал:</strong> ${fireplace.material}</p>
+        `;
+    
+        // Добавляем обработчик клика на ячейку
+        cell.addEventListener('click', () => {
+            openPopup(fireplace);  // Открытие попапа с деталями радиатора
+        });
+    
+        return cell;
+    }
+    function openPopup(fireplace) {
+        // Создаём попап
+        const popup = document.createElement('div');
+        popup.classList.add('popup');  // Добавляем класс для стилизации
+    
+        popup.innerHTML = `
+        <div class="popup-content">
+            <button class="popup-close" onclick="closePopup()">X</button>
+            <h2>${fireplace.name}</h2>
+            <img src="http://localhost:5000${fireplace.imagePath}" class="product-image" alt="Image of ${fireplace.name}">
+            <p><strong>Цена:</strong> ${fireplace.price} руб.</p>
+            <p><strong>Мощность нагрева:</strong> ${fireplace.heatedValue} Вт</p>
+            <p><strong>Материал:</strong> ${fireplace.material}</p>
+            <p><strong>Макс. температура:</strong> ${fireplace.maxTemperature}°C</p>
+            <p><strong>Описание:</strong> ${fireplace.description}</p>
+        </div>
+    `;
+    
+        // Добавляем попап на страницу
+        document.body.appendChild(popup);
+        document.body.style.overflow = 'hidden';  // Блокируем прокрутку страницы при открытом попапе
+    }
+    
+    // Функция для закрытия попапа
+    function closePopup() {
+        const popup = document.querySelector('.popup');
+        if (popup) {
+            popup.remove();
+        }
+        document.body.style.overflow = '';  // Восстанавливаем прокрутку страницы
+    }
+    
+    // Функция для перехода на следующую страницу
+    async function getNextPage() {
+        if (!isLoading) {  // Если не идет загрузка
+            offset += limit;  // Увеличиваем смещение для следующей страницы
+            pageCounter += 1;  // Увеличиваем счетчик страницы
+            const table = document.querySelector('#fireplaceProducts');  // Если в таблице 4 или более строки
+            table.innerHTML = "";  // Очищаем таблицу
+            await fetchfireplaces();  // Загружаем следующую страницу помп
+        }
+    }
+    
+    // Функция для перехода на предыдущую страницу
+    async function getPrevPage() {
+        if (!isLoading && offset > 0) {  // Если не идет загрузка и не на первой странице
+            offset -= limit;  // Уменьшаем смещение для предыдущей страницы
+            pageCounter -= 1;  // Уменьшаем счетчик страницы
+            const table = document.querySelector('#fireplaceProducts');  // Если в таблице 4 или более строки
+            table.innerHTML = "";  // Очищаем таблицу
+            await fetchfireplaces();  // Загружаем предыдущую страницу помп
+        }
+    }
+    
+    // Функция для поиска и подсветки текста
+    function searchText() {
+        // Получаем введенный текст
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let mainContent = document.getElementById('mainContent');
+    
+        // Убираем предыдущую подсветку
+        let cleanedContent = mainContent.innerHTML.replace(/<mark>(.*?)<\/mark>/g, '$1');
+    
+        // Если поле ввода пустое, восстанавливаем текст без подсветки
+        if (input.length === 0) {
+            mainContent.innerHTML = cleanedContent;
+            return; // Завершаем функцию
+        }
+    
+        // Создаем регулярное выражение для поиска введенного текста
+        let regex = new RegExp(`(${input})`, 'gi'); // 'g' - глобальный поиск, 'i' - не учитываем регистр
+    
+        // Подсвечиваем введенный текст
+        let highlightedContent = cleanedContent.replace(regex, '<mark>$1</mark>');
+        
+        // Обновляем содержимое
+        mainContent.innerHTML = highlightedContent;
+    }
+    
+    // Загрузка помп при первой загрузке страницы
+    fetchfireplaces();
+    
+    
+    </script>
 </body>
 </html>

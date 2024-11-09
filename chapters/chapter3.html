@@ -4,6 +4,52 @@
     <meta charset="UTF-8">
     <title>Водонагреватели</title>
     <link href="../styles.css" rel="stylesheet" type="text/css">
+    <style>
+        /* Стиль для попапа */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+    
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+    
+        .popup-image {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+        }
+    
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    
+        .popup-close:hover {
+            background: darkred;
+        }
+    </style>
 </head>
 <body>
     <table width="100%" align="center" class="header">
@@ -95,39 +141,20 @@
                 </div>
                 
                 <table width="100%">
-                    <tr>
-                        <td align="center" class="product-box">
-                            <img src="./chapter_sources/heater1.png" alt="Водонагреватель 1" class="product-image">
-                            <strong>Накопительный косвенный водонагреватель Drazice OKC 200 NTR</strong>
-                            <p>Объем: 80 л</p>
-                            <p>Мощность: 2 кВт</p>
-                            <p>Цена: 15,000 руб.</p>
-                        </td>
-                        <td align="center" class="product-box">
-                            <img src="./chapter_sources/heater2.png" alt="Водонагреватель 2" class="product-image">
-                            <strong>Проточный электрический водонагреватель Zanussi SmartTap</strong>
-                            <p>Объем: 100 л</p>
-                            <p>Мощность: 2.5 кВт</p>
-                            <p>Цена: 18,000 руб.</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center" class="product-box">
-                            <img style ="width:250px" src="./chapter_sources/heater3.jpg" alt="Водонагреватель 3" class="product-image">
-                            <strong>Газовый водонагреватель Ariston SGA 200 R</strong>
-                            <p>Объем: 120 л</p>
-                            <p>Мощность: 3 кВт</p>
-                            <p>Цена: 22,000 руб.</p>
-                        </td>
-                        <td align="center" class="product-box">
-                            <img src="./chapter_sources/heater4.png" alt="Водонагреватель 4" class="product-image">
-                            <strong>Накопительный электрический водонагреватель Electrolux EWH 50 Centurio IQ 2.0</strong>
-                            <p>Объем: 150 л</p>
-                            <p>Мощность: 3.5 кВт</p>
-                            <p>Цена: 25,000 руб.</p>
-                        </td>
-                    </tr>
-                </table>
+                    <table class="product-box" id="waterBoilerProducts">
+                    
+                    </table>
+                    
+                    <div id="waterBoilersList">
+                        <div id="waterBoilersContainer"></div>
+                    
+                        <!-- Пагинация -->
+                        <div class="pagination">
+                            <button id="PrevPageButton" onclick="getPrevPage()" disabled>Предыдущая страница</button>
+                            <span id="PageCounter">1</span>
+                            <button id="NextPageButton" onclick="getNextPage()" disabled>Следующая страница</button>
+                        </div>
+                    </div>
             </td>
     <!--Ьаннер правый -->
             <td width="12%" valign="top" align="center" class="ads-container">
@@ -164,8 +191,161 @@
 
 <!-- JavaScript для поиска -->
 <script>
+const config = {
+    apiUrl: 'http://localhost:5000/api'  // URL API для помп
+};
 
+let offset = 0;  // Смещение для пагинации
+const limit = 4;  // Количество элементов на странице
+let pageCounter = 1;  // Счетчик текущей страницы
+let isLoading = false;  // Признак загрузки данных
 
+// Функция для загрузки помп с API
+async function fetchwaterBoilers() {
+    if (isLoading) return;  // Если уже идет загрузка, не делать новый запрос
+    isLoading = true;  // Устанавливаем флаг загрузки
+
+    try {
+        // Выполняем запрос к API с учетом offset и limit
+        const response = await fetch(`${config.apiUrl}/WaterBoiler?offset=${offset}&limit=${limit}`);
+
+        if (!response.ok) {
+            throw new Error('Ошибка сервера');
+        }
+
+        const data = await response.json();
+
+        // Очистка контейнера перед добавлением новых данных
+        const container = document.getElementById('waterBoilersContainer');
+        container.innerHTML = ''; // Очищаем контейнер перед добавлением
+
+        if (data.list.length > 0) {
+            // Добавляем радиаторы в таблицу
+            data.list.forEach(waterBoiler => {
+                addwaterBoilerToList(waterBoiler);  // Добавляем радиатор в список
+            });
+        } else {
+            container.innerHTML = '<p>Водонагреватели не найдены.</p>';
+        }
+
+        // Обновление состояния кнопок пагинации
+        document.getElementById("PrevPageButton").disabled = offset === 0;
+        document.getElementById("NextPageButton").disabled = data.list.length < limit;
+
+    } catch (error) {
+        console.error('Ошибка при загрузке данных:', error);
+        document.getElementById('waterBoilersContainer').innerHTML = '<p>Произошла ошибка при загрузке данных.</p>';
+    } finally {
+        document.getElementById("PageCounter").innerText = pageCounter;  // Обновляем счетчик страниц
+        isLoading = false;  // Сбрасываем флаг загрузки
+    }
+}
+    
+// Функция для добавления помп в список
+function addwaterBoilerToList(waterBoiler) {
+    const table = document.querySelector('#waterBoilerProducts'); // Получаем таблицу
+
+    // Проверка на существование таблицы
+    if (!table) {
+        console.error('Таблица с ID не найдена!');
+        return;
+    }
+
+    let row = table.querySelector('tr:last-child'); // Получаем последнюю строку
+
+    // Проверяем, если в текущей строке меньше двух ячеек, добавляем радиатор в эту строку
+    if (row && row.children.length < 2) {
+        const cell = createwaterBoilerCell(waterBoiler);  // Создаем ячейку для радиатора
+        row.appendChild(cell);  // Добавляем ячейку в текущую строку
+    } else {
+        // Если в текущей строке уже два радиатора, создаем новую строку
+        row = document.createElement('tr');
+        table.appendChild(row);  // Добавляем новую строку в таблицу
+
+        const cell = createwaterBoilerCell(waterBoiler);  // Создаем ячейку для радиатора
+        row.appendChild(cell);  // Добавляем ячейку в новую строку
+    }
+}
+
+// Функция для создания ячейки с радиатором
+function createwaterBoilerCell(waterBoiler) {
+    const cell = document.createElement('td');
+    cell.align = 'center'; // Выравнивание по центру
+    cell.classList.add('product-box'); // Используем тот же класс для стилизации
+
+    // Наполняем ячейку данными о радиаторе
+    cell.innerHTML = `
+        <div class="product-box">
+            <img src="http://localhost:5000${waterBoiler.imagePath}" class="product-image" alt="Image of ${waterBoiler.name}">
+        </div>
+        <strong class="product-label">${waterBoiler.name}</strong>
+        <p><strong>Цена:</strong> ${waterBoiler.price} руб.</p>
+        <p><strong>Мощность нагрева:</strong> ${waterBoiler.heatedValue} Вт</p>
+        <p><strong>Материал:</strong> ${waterBoiler.material}</p>
+    `;
+
+    // Добавляем обработчик клика на ячейку
+    cell.addEventListener('click', () => {
+        openPopup(waterBoiler);  // Открытие попапа с деталями радиатора
+    });
+
+    return cell;
+}
+function openPopup(waterBoiler) {
+    // Создаём попап
+    const popup = document.createElement('div');
+    popup.classList.add('popup');  // Добавляем класс для стилизации
+
+    popup.innerHTML = `
+        <div class="popup-content">
+            <button class="popup-close" onclick="closePopup()">X</button>
+            <h2>${waterBoiler.name}</h2>
+            <img src="http://localhost:5000${waterBoiler.imagePath}" class="product-image" alt="Image of ${waterBoiler.name}">
+            <p><strong>Цена:</strong> ${waterBoiler.price} руб.</p>
+            <p><strong>Мощность нагрева:</strong> ${waterBoiler.heatedValue} Вт</p>
+            <p><strong>Материал:</strong> ${waterBoiler.material}</p>
+            <p><strong>Макс. температура:</strong> ${waterBoiler.maxTemperature}°C</p>
+            <p><strong>Описание:</strong> ${waterBoiler.description}</p>
+        </div>
+    `;
+
+    // Добавляем попап на страницу
+    document.body.appendChild(popup);
+    document.body.style.overflow = 'hidden';  // Блокируем прокрутку страницы при открытом попапе
+}
+
+// Функция для закрытия попапа
+function closePopup() {
+    const popup = document.querySelector('.popup');
+    if (popup) {
+        popup.remove();
+    }
+    document.body.style.overflow = '';  // Восстанавливаем прокрутку страницы
+}
+
+// Функция для перехода на следующую страницу
+async function getNextPage() {
+    if (!isLoading) {  // Если не идет загрузка
+        offset += limit;  // Увеличиваем смещение для следующей страницы
+        pageCounter += 1;  // Увеличиваем счетчик страницы
+        const table = document.querySelector('#waterBoilerProducts');  // Если в таблице 4 или более строки
+        table.innerHTML = "";  // Очищаем таблицу
+        await fetchwaterBoilers();  // Загружаем следующую страницу помп
+    }
+}
+
+// Функция для перехода на предыдущую страницу
+async function getPrevPage() {
+    if (!isLoading && offset > 0) {  // Если не идет загрузка и не на первой странице
+        offset -= limit;  // Уменьшаем смещение для предыдущей страницы
+        pageCounter -= 1;  // Уменьшаем счетчик страницы
+        const table = document.querySelector('#waterBoilerProducts');  // Если в таблице 4 или более строки
+        table.innerHTML = "";  // Очищаем таблицу
+        await fetchwaterBoilers();  // Загружаем предыдущую страницу помп
+    }
+}
+
+// Функция для поиска и подсветки текста
 function searchText() {
     // Получаем введенный текст
     let input = document.getElementById('searchInput').value.toLowerCase();
@@ -189,6 +369,9 @@ function searchText() {
     // Обновляем содержимое
     mainContent.innerHTML = highlightedContent;
 }
+
+// Загрузка помп при первой загрузке страницы
+fetchwaterBoilers();
 
 
 </script>

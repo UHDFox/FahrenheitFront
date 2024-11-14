@@ -22,17 +22,17 @@
                     <table width="100%">
                         <tr>
                             <td align="right">
-                                <input type="text" placeholder="логин" size="15" class="input-field">
+                                <input type="text" id="loginEmail" placeholder="логин" size="15" class="input-field">
                             </td>
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="password" placeholder="пароль" size="15" class="input-field">
+                                <input type="password" id="loginPassword" placeholder="пароль" size="15" class="input-field">
                             </td>
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="submit" value="вход" class="submit-button">
+                                <input type="submit" value="вход" class="submit-button" onclick="loginUser()">
                                 <a href="authorize.html" class="register-link">регистрация</a>
                             </td>
                         </tr>
@@ -62,7 +62,7 @@
             </td>
             <td align="center" width="25%">
                 <a href="chapters/chapter4.html" class="nav-button" style="display: inline-block; width: 95%; text-align: center; padding: 8px; border-radius: 15px;">
-                    Сантехника
+                    Камины
                 </a>
             </td>
         </tr>
@@ -156,6 +156,60 @@ function searchText() {
     
     // Обновляем содержимое
     mainContent.innerHTML = highlightedContent;
+}
+
+
+function loginUser() {
+    // Получаем значения полей логина и пароля
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+
+    // Проверка на пустые поля
+    if (!email || !password) {
+        alert("Пожалуйста, заполните оба поля.");
+        return;
+    }
+
+    // Создаем тело запроса
+    const loginData = {
+        email: email,
+        password: password
+    };
+
+    // Отправка POST-запроса на API
+    fetch('http://localhost:5000/api/v1/User/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(loginData)
+    })
+    .then(response => {
+        if (response.status === 200) {
+            // Если ответ успешен (код 200), получаем токен
+            return response.text();  // Читаем тело ответа как текст (токен)
+        } else if (response.status === 500) {
+            // Если сервер возвращает статус 500, выводим сообщение об ошибке
+            alert("Ошибка: Неверные данные для входа.");
+            return Promise.reject("Unauthorized");
+        } else {
+            // В случае других статусов — выводим сообщение об ошибке
+            return response.text().then(error => {
+                alert("Ошибка входа: " + error);
+                return Promise.reject(error);
+            });
+        }
+    })
+    .then(token => {
+        if (token) {
+            // Если токен получен, сохраняем его в localStorage
+            localStorage.setItem('token', token);  // Сохраняем токен
+            alert("Вход выполнен успешно!");
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+    });
 }
 
 

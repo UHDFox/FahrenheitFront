@@ -60,17 +60,17 @@
                     <table width="100%">
                         <tr>
                             <td align="right">
-                                <input type="text" placeholder="логин" size="15" class="input-field">
+                                <input type="text" id="loginEmail" placeholder="логин" size="15" class="input-field">
                             </td>
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="password" placeholder="пароль" size="15" class="input-field">
+                                <input type="password" id="loginPassword" placeholder="пароль" size="15" class="input-field">
                             </td>
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="submit" value="вход" class="submit-button">
+                                <input type="submit" value="вход" class="submit-button" onclick="loginUser()">
                                 <a href="authorize.html" class="register-link">регистрация</a>
                             </td>
                         </tr>
@@ -100,7 +100,7 @@
         </td>
         <td align="center" width="25%">
             <a href="chapters/chapter4.html" class="nav-button" style="display: inline-block; width: 95%; text-align: center; padding: 8px; border-radius: 15px;">
-                Сантехника
+                Камины
             </a>
         </td>
     </tr>
@@ -122,8 +122,8 @@
             <td width="34%"  valign="center">
                 <div class="form-container" style="height: 450px;">
                     <h2 class="form-title">Регистрация</h2>
-                    <form action="submit_registration.php" method="POST">
-                        <input type="text" name="username" placeholder="Имя пользователя" class="register-input" required>
+                    <form id="registerForm">
+                        <input type="text" name="name" placeholder="Имя пользователя" class="register-input" required>
                         <input type="text" name="phone" placeholder="Номер телефона" class="register-input" required>
                         <input type="email" name="email" placeholder="Электронная почта" class="register-input" required>
                         <input type="password" name="password" placeholder="Пароль" class="register-input" required>
@@ -133,7 +133,7 @@
                             Я согласен(на) с <a href="https://farengeit-online.ru/agreement/" target="_blank">политикой обработки персональных данных</a>.
                         </label>
                         <br>
-                        <input type="submit" value="Зарегистрироваться" style = "margin-top: 45px;"class="register-button">
+                        <button type="button" onclick="registerUser()" style="margin-top: 45px;" class="register-button">Зарегистрироваться</button>
                     </form>
                 </div>
                 
@@ -200,6 +200,127 @@ function searchText() {
 }
 
 
+function registerUser() {
+    // Получаем форму и значения полей
+    const form = document.getElementById('registerForm');
+    const name = form.name.value.trim(); 
+    const phone = form.phone.value.trim();  
+    const email = form.email.value.trim();
+    const password = form.password.value;
+    const confirmPassword = form.confirm_password.value;
+    const agree = form.agree.checked;
+
+    // Проверка на обязательное заполнение всех полей
+    if (!name || !email || !password || !confirmPassword) {
+        alert("Пожалуйста, заполните все поля.");
+        return;
+    }
+
+    // Проверка на совпадение паролей
+    if (password !== confirmPassword) {
+        alert("Пароли не совпадают.");
+        return;
+    }
+
+    // Проверка на согласие с политикой обработки персональных данных
+    if (!agree) {
+        alert("Пожалуйста, подтвердите согласие с политикой обработки персональных данных.");
+        return;
+    }
+
+    // Создаем тело запроса
+    const requestData = {
+        name: name,
+        email: email,
+        phoneNumber: phone,  
+        password: password
+    };
+
+    // Отправка POST-запроса на API
+    fetch('http://localhost:5000/api/v1/User/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => {
+        if (response.ok) {
+            // Если ответ успешен (код 200), показываем сообщение об успехе
+            alert("Регистрация прошла успешно!");
+        } else {
+            // Если ответ не успешен, обрабатываем его как ошибку
+            return response.json().then(data => {
+                alert("Ошибка регистрации: " + (data.message || "Неизвестная ошибка"));
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert("Ошибка при отправке запроса.");
+    });
+}
+
+
+
+function loginUser() {
+    // Получаем значения полей логина и пароля
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+
+    // Проверка на пустые поля
+    if (!email || !password) {
+        alert("Пожалуйста, заполните оба поля.");
+        return;
+    }
+
+    // Создаем тело запроса
+    const loginData = {
+        email: email,
+        password: password
+    };
+
+    // Отправка POST-запроса на API
+    fetch('http://localhost:5000/api/v1/User/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(loginData)
+    })
+    .then(response => {
+        if (response.status === 200) {
+            // Если ответ успешен (код 200), получаем токен
+            return response.text();  // Читаем тело ответа как текст (токен)
+        } else if (response.status === 500) {
+            // Если сервер возвращает статус 500, выводим сообщение об ошибке
+            alert("Ошибка: Неверные данные для входа.");
+            return Promise.reject("Unauthorized");
+        } else {
+            // В случае других статусов — выводим сообщение об ошибке
+            return response.text().then(error => {
+                alert("Ошибка входа: " + error);
+                return Promise.reject(error);
+            });
+        }
+    })
+    .then(token => {
+        if (token) {
+            // Если токен получен, сохраняем его в localStorage
+            localStorage.setItem('token', token);  // Сохраняем токен
+            alert("Вход выполнен успешно!");
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+    });
+}
+
+
+
 </script>
+
+
 </body>
 </html>
+

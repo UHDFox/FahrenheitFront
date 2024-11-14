@@ -4,6 +4,59 @@
     <meta charset="UTF-8">
     <title>Радиаторы отопления</title>
     <link href="../styles.css" rel="stylesheet" type="text/css">
+    <style>
+        /* Стиль для попапа */
+        .popup {
+    position: fixed;
+    top: 50%;  /* Центрируем попап по вертикали */
+    left: 50%; /* Центрируем попап по горизонтали */
+    transform: translate(-50%, -50%); /* Корректировка для точного центрирования */
+    width: 300px;  /* Установим фиксированную ширину */
+    height: auto;  /* Делаем высоту авто, чтобы она зависела от содержимого */
+    max-height: 80%;  /* Максимальная высота 80% от экрана */
+    display: flex;
+    flex-direction: column;  /* Контент вертикально */
+    justify-content: flex-start;  /* Контент сверху */
+    align-items: center;  /* Контент по центру */
+    z-index: 9999;
+    background-color: white;  /* Белый фон */
+    padding: 15px;  /* Уменьшенный отступ */
+    border-radius: 8px;  /* Скругленные углы */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  /* Легкая тень */
+}
+    
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+    
+        .popup-image {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+        }
+    
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    
+        .popup-close:hover {
+            background: darkred;
+        }
+    </style>
+    
 </head>
 <body>
     <table width="100%" align="center" class="header">
@@ -22,18 +75,18 @@
                     <table width="100%">
                         <tr>
                             <td align="right">
-                                <input type="text" placeholder="логин" size="15" class="input-field">
+                                <input type="text" id="loginEmail" placeholder="логин" size="15" class="input-field">
                             </td>
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="password" placeholder="пароль" size="15" class="input-field">
+                                <input type="password" id="loginPassword" placeholder="пароль" size="15" class="input-field">
                             </td>
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="submit" value="вход" class="submit-button">
-                                <a href="../authorize.html" class="register-link">регистрация</a>
+                                <input type="submit" value="вход" class="submit-button" onclick="loginUser()">
+                                <a href="authorize.html" class="register-link">регистрация</a>
                             </td>
                         </tr>
                     </table>
@@ -62,7 +115,7 @@
             </td>
             <td align="center" width="25%">
                 <a href="chapter4.html" class="nav-button" style="display: inline-block; width: 95%; text-align: center; padding: 8px; border-radius: 15px;">
-                    Сантехника
+                    Камины
                 </a>
             </td>
         </tr>
@@ -92,37 +145,21 @@
                     <p>Скидки до 50% на определенные модели! Не упустите возможность приобрести качественную продукцию по сниженным ценам.</p>
                     <p>Для получения дополнительной информации о характеристиках и ценах, посетите <a href="https://farengeit-online.ru/catalog/radiatory-otopleniya/" target="_blank">наш каталог радиаторов отопления</a>.</p>
                 </div>
-                <table class="product-box">
-                    <tr>
-                        <td align="center" class="product-box">
-                            <img src="chapter_sources/226353e3-12dd-11eb-a5dd-7085c268ec76_38255dfe-16a4-11eb-a5de-7085c268ec76.jpg" class="product-image" alt="Продукт 1"/>
-                            <strong class="product-label">Лучший выбор!</strong>
-                            <p>Эффективный радиатор для любого помещения.</p>
-                        </td>
-                        <td align="center" class="product-box">
-                            <img src="chapter_sources/secondradiator.jpg" class="product-image" alt="Продукт 2"/>
-                            <strong class="product-label">Супер скидка!</strong>
-                            <p>Качественный алюминиевый радиатор.</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center" class="product-box">
-                            <img src="chapter_sources/thirdraditor.jpg" class="product-image" alt="Продукт 3"/>
-                            <strong class="product-label">Топ продаж!</strong>
-                            <p>Универсальный радиатор для отопления.</p>
-                        </td>
-                        <td align="center" class="product-box">
-                            <img src="chapter_sources/fourthradiator.jpg" class="product-image" alt="Продукт 4"/>
-                            <strong class="product-label">Специальное предложение!</strong>
-                            <p>Долговечный чугунный радиатор.</p>
-                        </td>
-
-
-                        
-                    </tr>
+                <table class="product-box" id="radiatoriProducts">
+                    
                 </table>
                 
-
+                <div id="radiatorsList">
+                    <div id="radiatorsContainer"></div>
+                
+                    <!-- Пагинация -->
+                    <div class="pagination">
+                        <button id="PrevPageButton" onclick="getPrevPage()" disabled>Предыдущая страница</button>
+                        <span id="PageCounter">1</span>
+                        <button id="NextPageButton" onclick="getNextPage()" disabled>Следующая страница</button>
+                    </div>
+                </div>
+                
             </td>
     <!--Ьаннер правый -->
             <td width="12%" valign="top" align="center" class="ads-container">
@@ -159,8 +196,160 @@
 
 <!-- JavaScript для поиска -->
 <script>
+const config = {
+    apiUrl: 'http://localhost:5000/api'  // URL API для радиаторов
+};
 
+let offset = 0;  // Смещение для пагинации
+const limit = 4;  // Количество элементов на странице
+let pageCounter = 1;  // Счетчик текущей страницы
+let isLoading = false;  // Признак загрузки данных
 
+// Функция для загрузки радиаторов с API
+async function fetchRadiators() {
+    if (isLoading) return;  // Если уже идет загрузка, не делать новый запрос
+    isLoading = true;  // Устанавливаем флаг загрузки
+
+    try {
+        // Выполняем запрос к API с учетом offset и limit
+        const response = await fetch(`${config.apiUrl}/Radiator?offset=${offset}&limit=${limit}`);
+
+        if (!response.ok) {
+            throw new Error('Ошибка сервера');
+        }
+
+        const data = await response.json();
+
+        // Очистка контейнера перед добавлением новых данных
+        const container = document.getElementById('radiatorsContainer');
+        container.innerHTML = ''; // Очищаем контейнер перед добавлением
+
+        if (data.list.length > 0) {
+            // Добавляем радиаторы в таблицу
+            data.list.forEach(radiator => {
+                addRadiatorToList(radiator);  // Добавляем радиатор в список
+            });
+        } else {
+            container.innerHTML = '<p>Радиаторы не найдены.</p>';
+        }
+
+        // Обновление состояния кнопок пагинации
+        document.getElementById("PrevPageButton").disabled = offset === 0;
+        document.getElementById("NextPageButton").disabled = data.list.length < limit;
+
+    } catch (error) {
+        console.error('Ошибка при загрузке данных:', error);
+        document.getElementById('radiatorsContainer').innerHTML = '<p>Произошла ошибка при загрузке данных.</p>';
+    } finally {
+        document.getElementById("PageCounter").innerText = pageCounter;  // Обновляем счетчик страниц
+        isLoading = false;  // Сбрасываем флаг загрузки
+    }
+}
+
+// Функция для добавления радиатора в список
+function addRadiatorToList(radiator) {
+    const table = document.querySelector('#radiatoriProducts'); // Получаем таблицу
+
+    // Проверка на существование таблицы
+    if (!table) {
+        console.error('Таблица с ID не найдена!');
+        return;
+    }
+
+    let row = table.querySelector('tr:last-child'); // Получаем последнюю строку
+
+    // Проверяем, если в текущей строке меньше двух ячеек, добавляем радиатор в эту строку
+    if (row && row.children.length < 2) {
+        const cell = createRadiatorCell(radiator);  // Создаем ячейку для радиатора
+        row.appendChild(cell);  // Добавляем ячейку в текущую строку
+    } else {
+        // Если в текущей строке уже два радиатора, создаем новую строку
+        row = document.createElement('tr');
+        table.appendChild(row);  // Добавляем новую строку в таблицу
+
+        const cell = createRadiatorCell(radiator);  // Создаем ячейку для радиатора
+        row.appendChild(cell);  // Добавляем ячейку в новую строку
+    }
+}
+
+// Функция для создания ячейки с радиатором
+function createRadiatorCell(radiator) {
+    const cell = document.createElement('td');
+    cell.align = 'center'; // Выравнивание по центру
+    cell.classList.add('product-box'); // Используем тот же класс для стилизации
+
+    // Наполняем ячейку данными о радиаторе
+    cell.innerHTML = `
+        <div class="product-box">
+            <img src="http://localhost:5000${radiator.imagePath}" class="product-image" alt="Image of ${radiator.name}">
+        </div>
+        <strong class="product-label">${radiator.name}</strong>
+        <p><strong>Цена:</strong> ${radiator.price} руб.</p>
+        <p><strong>Мощность:</strong> ${radiator.heatedValue} Вт</p>  <!-- Brief info: only price and power -->
+    `;
+
+    // Добавляем обработчик клика на ячейку
+    cell.addEventListener('click', () => {
+        openPopup(radiator);  // Открытие попапа с деталями радиатора
+    });
+
+    return cell;
+}
+function openPopup(radiator) {
+    // Создаём попап
+    const popup = document.createElement('div');
+    popup.classList.add('popup');  // Добавляем класс для стилизации
+
+    // Содержимое попапа
+    popup.innerHTML = `
+    <div class="popup-content">
+            <button class="popup-close" onclick="closePopup()">X</button>
+            <h2>${radiator.name}</h2>
+            <img src="http://localhost:5000${radiator.imagePath}" class="popup-image" alt="Image of ${radiator.name}">
+            <p><strong>Цена:</strong> ${radiator.price} руб.</p>
+            <p><strong>Мощность обогрева:</strong> ${radiator.heatedValue} Вт</p>
+            <p><strong>Материал:</strong> ${radiator.material}</p>
+            <p><strong>Описание:</strong> ${radiator.description || 'Описание не доступно.'}</p>
+        </div>
+    `;
+
+    // Добавляем попап на страницу
+    document.body.appendChild(popup);
+    document.body.style.overflow = 'hidden';  // Блокируем прокрутку страницы при открытом попапе
+}
+
+// Функция для закрытия попапа
+function closePopup() {
+    const popup = document.querySelector('.popup');
+    if (popup) {
+        popup.remove();
+    }
+    document.body.style.overflow = '';  // Восстанавливаем прокрутку страницы
+}
+
+// Функция для перехода на следующую страницу
+async function getNextPage() {
+    if (!isLoading) {  // Если не идет загрузка
+        offset += limit;  // Увеличиваем смещение для следующей страницы
+        pageCounter += 1;  // Увеличиваем счетчик страницы
+        const table = document.querySelector('#radiatoriProducts');  // Если в таблице 4 или более строки
+        table.innerHTML = "";  // Очищаем таблицу
+        await fetchRadiators();  // Загружаем следующую страницу радиаторов
+    }
+}
+
+// Функция для перехода на предыдущую страницу
+async function getPrevPage() {
+    if (!isLoading && offset > 0) {  // Если не идет загрузка и не на первой странице
+        offset -= limit;  // Уменьшаем смещение для предыдущей страницы
+        pageCounter -= 1;  // Уменьшаем счетчик страницы
+        const table = document.querySelector('#radiatoriProducts');  // Если в таблице 4 или более строки
+        table.innerHTML = "";  // Очищаем таблицу
+        await fetchRadiators();  // Загружаем предыдущую страницу радиаторов
+    }
+}
+
+// Функция для поиска и подсветки текста
 function searchText() {
     // Получаем введенный текст
     let input = document.getElementById('searchInput').value.toLowerCase();
@@ -184,6 +373,66 @@ function searchText() {
     // Обновляем содержимое
     mainContent.innerHTML = highlightedContent;
 }
+
+
+
+function loginUser() {
+    // Получаем значения полей логина и пароля
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+
+    // Проверка на пустые поля
+    if (!email || !password) {
+        alert("Пожалуйста, заполните оба поля.");
+        return;
+    }
+
+    // Создаем тело запроса
+    const loginData = {
+        email: email,
+        password: password
+    };
+
+    // Отправка POST-запроса на API
+    fetch('http://localhost:5000/api/v1/User/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(loginData)
+    })
+    .then(response => {
+        if (response.status === 200) {
+            // Если ответ успешен (код 200), получаем токен
+            return response.text();  // Читаем тело ответа как текст (токен)
+        } else if (response.status === 500) {
+            // Если сервер возвращает статус 500, выводим сообщение об ошибке
+            alert("Ошибка: Неверные данные для входа.");
+            return Promise.reject("Unauthorized");
+        } else {
+            // В случае других статусов — выводим сообщение об ошибке
+            return response.text().then(error => {
+                alert("Ошибка входа: " + error);
+                return Promise.reject(error);
+            });
+        }
+    })
+    .then(token => {
+        if (token) {
+            // Если токен получен, сохраняем его в localStorage
+            localStorage.setItem('token', token);  // Сохраняем токен
+            alert("Вход выполнен успешно!");
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+    });
+}
+
+// Загрузка радиаторов при первой загрузке страницы
+fetchRadiators();
+
+
 
 
 </script>

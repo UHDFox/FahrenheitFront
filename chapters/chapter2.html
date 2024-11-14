@@ -7,17 +7,23 @@
     <style>
         /* Стиль для попапа */
         .popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
+    position: fixed;
+    top: 50%;  /* Центрируем попап по вертикали */
+    left: 50%; /* Центрируем попап по горизонтали */
+    transform: translate(-50%, -50%); /* Корректировка для точного центрирования */
+    width: 300px;  /* Установим фиксированную ширину */
+    height: auto;  /* Делаем высоту авто, чтобы она зависела от содержимого */
+    max-height: 80%;  /* Максимальная высота 80% от экрана */
+    display: flex;
+    flex-direction: column;  /* Контент вертикально */
+    justify-content: flex-start;  /* Контент сверху */
+    align-items: center;  /* Контент по центру */
+    z-index: 9999;
+    background-color: white;  /* Белый фон */
+    padding: 15px;  /* Уменьшенный отступ */
+    border-radius: 8px;  /* Скругленные углы */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  /* Легкая тень */
+}
     
         .popup-content {
             background-color: white;
@@ -68,18 +74,18 @@
                     <table width="100%">
                         <tr>
                             <td align="right">
-                                <input type="text" placeholder="логин" size="15" class="input-field">
+                                <input type="text" id="loginEmail" placeholder="логин" size="15" class="input-field">
                             </td>
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="password" placeholder="пароль" size="15" class="input-field">
+                                <input type="password" id="loginPassword" placeholder="пароль" size="15" class="input-field">
                             </td>
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="submit" value="вход" class="submit-button">
-                                <a href="../authorize.html" class="register-link">регистрация</a>
+                                <input type="submit" value="вход" class="submit-button" onclick="loginUser()">
+                                <a href="authorize.html" class="register-link">регистрация</a>
                             </td>
                         </tr>
                     </table>
@@ -108,7 +114,7 @@
             </td>
             <td align="center" width="25%">
                 <a href="chapter4.html" class="nav-button" style="display: inline-block; width: 95%; text-align: center; padding: 8px; border-radius: 15px;">
-                    Сантехника
+                    Камины
                 </a>
             </td>
         </tr>
@@ -240,7 +246,7 @@ async function fetchpumps() {
         isLoading = false;  // Сбрасываем флаг загрузки
     }
 }
-
+    
 // Функция для добавления помп в список
 function addpumpToList(pump) {
     const table = document.querySelector('#pumpProducts'); // Получаем таблицу
@@ -280,8 +286,7 @@ function createpumpCell(pump) {
         </div>
         <strong class="product-label">${pump.name}</strong>
         <p><strong>Цена:</strong> ${pump.price} руб.</p>
-        <p><strong>Мощность обогрева:</strong> ${pump.heatedValue} Вт</p>
-        <p><strong>Материал:</strong> ${pump.material}</p>
+        <p><strong>Мощность:</strong> ${pump.powerSupply} Вт</p>  <!-- Используем pump.powerSupply -->
     `;
 
     // Добавляем обработчик клика на ячейку
@@ -303,8 +308,8 @@ function openPopup(pump) {
             <h2>${pump.name}</h2>
             <img src="http://localhost:5000${pump.imagePath}" class="popup-image" alt="Image of ${pump.name}">
             <p><strong>Цена:</strong> ${pump.price} руб.</p>
-            <p><strong>Мощность обогрева:</strong> ${pump.heatedValue} Вт</p>
-            <p><strong>Материал:</strong> ${pump.material}</p>
+            <p><strong>Мощность обогрева:</strong> ${pump.powerSupply} Вт</p>
+            <p><strong>Давление:</strong> ${pump.pressure} Вт</p>
             <p><strong>Описание:</strong> ${pump.description || 'Описание не доступно.'}</p>
         </div>
     `;
@@ -369,6 +374,61 @@ function searchText() {
     // Обновляем содержимое
     mainContent.innerHTML = highlightedContent;
 }
+
+
+function loginUser() {
+    // Получаем значения полей логина и пароля
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+
+    // Проверка на пустые поля
+    if (!email || !password) {
+        alert("Пожалуйста, заполните оба поля.");
+        return;
+    }
+
+    // Создаем тело запроса
+    const loginData = {
+        email: email,
+        password: password
+    };
+
+    // Отправка POST-запроса на API
+    fetch('http://localhost:5000/api/v1/User/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(loginData)
+    })
+    .then(response => {
+        if (response.status === 200) {
+            // Если ответ успешен (код 200), получаем токен
+            return response.text();  // Читаем тело ответа как текст (токен)
+        } else if (response.status === 500) {
+            // Если сервер возвращает статус 500, выводим сообщение об ошибке
+            alert("Ошибка: Неверные данные для входа.");
+            return Promise.reject("Unauthorized");
+        } else {
+            // В случае других статусов — выводим сообщение об ошибке
+            return response.text().then(error => {
+                alert("Ошибка входа: " + error);
+                return Promise.reject(error);
+            });
+        }
+    })
+    .then(token => {
+        if (token) {
+            // Если токен получен, сохраняем его в localStorage
+            localStorage.setItem('token', token);  // Сохраняем токен
+            alert("Вход выполнен успешно!");
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+    });
+}
+
 
 // Загрузка помп при первой загрузке страницы
 fetchpumps();

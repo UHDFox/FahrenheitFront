@@ -84,7 +84,7 @@
                         <tr>
                             <td align="right">
                                 <input type="submit" value="вход" class="submit-button" onclick="loginUser()">
-                                <a href="authorize.html" class="register-link">регистрация</a>
+                                <a href="../authorize.html" class="register-link">регистрация</a>
                             </td>
                         </tr>
                     </table>
@@ -159,35 +159,40 @@
                         <!-- Пагинация -->
                         <div class="pagination">
                             <button id="PrevPageButton" onclick="getPrevPage()" disabled>Предыдущая страница</button>
-                            <span id="PageCounter">1</span>
+                            <span id="PageCounter" style="display: block; margin-left: auto; margin-right: auto; text-align: center;">1</span>
+
                             <button id="NextPageButton" onclick="getNextPage()" disabled>Следующая страница</button>
                         </div>
                     </div>
                 
             </td>
     <!--Ьаннер правый -->
-            <td width="12%" valign="top" align="center" class="ads-container">
-                <strong>ПОИСК</strong>
-                <br><input type="text" id="searchInput"style="margin-bottom: 5px;" value="" onkeyup=""><br>
-                <input type="button" onclick="searchText()" style="font-weight: bold;" value="поиск"><br><br>
-                <div class="ads-container">
-                    <a href="https://www.premium-plumbing.co.uk/toilets/" target="_blank">
-                        <img src="../source/premiumPlumbing.jpg"
-                             alt="Пример сайта"
-                             class="ad-image">
-                    </a>
-                    <a href="https://www.americanplumbingflorida.com" target="_blank">
-                        <img src="../source/american plumbing.jpg"
-                             alt="Пример сайта"
-                             class="ad-image">
-                    </a>
-                    <a href="https://ukbathroomstore.co.uk/?srsltid=AfmBOor4c0OGMmLlAZLYVcwGSjImeYjqfPFB8TqIF5rymqOQNr2b2hWF" target="_blank">
-                        <img src="../source/spidertoilet.jpg"
-                             alt="Пример сайта"
-                             class="ad-image">
-                    </a>
-                </div>
-            </td>
+    <td width="12%" valign="top" align="center" class="ads-container">
+        <strong>ПОИСК</strong>
+        <br>
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <!-- Поле ввода для поиска -->
+            <input type="text" id="searchInput" style="margin-bottom: 5px;" value="" onkeyup="">
+            
+            <!-- Изображение с ссылкой на страницу фильтров -->
+            <a href="../search.html">
+                <img src="../source/tools.png" alt="Фильтры поиска" style="margin-left: 10px; cursor: pointer; height: 20px;">
+            </a>
+        </div>
+    
+        <div class="ads-container">
+            <a href="https://www.premium-plumbing.co.uk/toilets/" target="_blank">
+                <img src="../source/premiumPlumbing.jpg"
+                    alt="Пример сайта"
+                    class="ad-image">
+            </a>
+            <a href="https://www.americanplumbingflorida.com" target="_blank">
+                <img src="../source/american plumbing.jpg"
+                    alt="Пример сайта"
+                    class="ad-image">
+            </a>
+        </div>
+    </td>
         </tr>
     </table>
 </div>
@@ -199,10 +204,61 @@
 
 
 <!-- JavaScript для поиска -->
-<script>
+<script type="module">
     const config = {
         apiUrl: 'http://localhost:5000/api'  // URL API для помп
     };
+
+    import { 
+    searchText, loginUser, updateLoginBlock, logoutUser, 
+    openCartPopup, closeCartPopup, addItemToCart, clearCart, 
+    decreaseItemQuantity, increaseItemQuantity 
+} from '../utility.js';
+document.addEventListener('DOMContentLoaded', async function () {
+    // Обновляем блок входа при загрузке
+    await updateLoginBlock();
+
+    // Привязываем события к элементам
+    const loginButton = document.querySelector('.submit-button');
+    if (loginButton) {
+        loginButton.addEventListener('click', loginUser);
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', searchText);
+    }
+
+    const logoutButton = document.querySelector('.logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logoutUser);
+    }
+
+    const addToCartButton = document.querySelector('.add-to-cart-button');
+    if (addToCartButton) {
+        addToCartButton.addEventListener('click', () => {
+            // Предполагается, что waterBoiler объект доступен здесь
+            if (typeof fireplace !== 'undefined') {
+                addItemToCart(fireplace.id, fireplace.name, fireplace.price, fireplace.imagePath);
+            } else {
+                console.error("Объект камина не найден");
+            }
+        });
+    }
+
+    // Привязка событий для пагинации
+    const nextPageButton = document.getElementById('NextPageButton');
+    if (nextPageButton) {
+        nextPageButton.addEventListener('click', getNextPage);
+        console.log('NextPageButton найден и обработчик добавлен');
+    }
+
+    const prevPageButton = document.getElementById('PrevPageButton');
+    if (prevPageButton) {
+        prevPageButton.addEventListener('click', getPrevPage);
+        console.log('PrevPageButton найден и обработчик добавлен');
+    }
+});
     
     let offset = 0;  // Смещение для пагинации
     const limit = 4;  // Количество элементов на странице
@@ -306,13 +362,14 @@
     
         popup.innerHTML = `
         <div class="popup-content">
-            <button class="popup-close" onclick="closePopup()">X</button>
+            <button class="popup-close" onclick="closeCartPopup()">X</button>
             <h2>${fireplace.name}</h2>
             <img src="http://localhost:5000${fireplace.imagePath}" class="product-image" alt="Image of ${fireplace.name}">
             <p><strong>Цена:</strong> ${fireplace.price} руб.</p>
             <p><strong>Мощность нагрева:</strong> ${fireplace.fireLevel} Вт</p>
             <p><strong>Расход топлива:</strong> ${fireplace.fuelUsage} кг/ч</p>
             <p><strong>Описание</strong> ${ fireplace.description}</p>
+            <button onclick="addItemToCart('${fireplace.id}', '${fireplace.name}', ${fireplace.price}, '${fireplace.imagePath}')">Добавить в корзину</button>
         </div>
     `;
     
@@ -321,14 +378,6 @@
         document.body.style.overflow = 'hidden';  // Блокируем прокрутку страницы при открытом попапе
     }
     
-    // Функция для закрытия попапа
-    function closePopup() {
-        const popup = document.querySelector('.popup');
-        if (popup) {
-            popup.remove();
-        }
-        document.body.style.overflow = '';  // Восстанавливаем прокрутку страницы
-    }
     
     // Функция для перехода на следующую страницу
     async function getNextPage() {
@@ -351,87 +400,6 @@
             await fetchfireplaces();  // Загружаем предыдущую страницу помп
         }
     }
-    
-    // Функция для поиска и подсветки текста
-    function searchText() {
-        // Получаем введенный текст
-        let input = document.getElementById('searchInput').value.toLowerCase();
-        let mainContent = document.getElementById('mainContent');
-    
-        // Убираем предыдущую подсветку
-        let cleanedContent = mainContent.innerHTML.replace(/<mark>(.*?)<\/mark>/g, '$1');
-    
-        // Если поле ввода пустое, восстанавливаем текст без подсветки
-        if (input.length === 0) {
-            mainContent.innerHTML = cleanedContent;
-            return; // Завершаем функцию
-        }
-    
-        // Создаем регулярное выражение для поиска введенного текста
-        let regex = new RegExp(`(${input})`, 'gi'); // 'g' - глобальный поиск, 'i' - не учитываем регистр
-    
-        // Подсвечиваем введенный текст
-        let highlightedContent = cleanedContent.replace(regex, '<mark>$1</mark>');
-        
-        // Обновляем содержимое
-        mainContent.innerHTML = highlightedContent;
-    }
-    
-
-
-    function loginUser() {
-    // Получаем значения полей логина и пароля
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-
-    // Проверка на пустые поля
-    if (!email || !password) {
-        alert("Пожалуйста, заполните оба поля.");
-        return;
-    }
-
-    // Создаем тело запроса
-    const loginData = {
-        email: email,
-        password: password
-    };
-
-    // Отправка POST-запроса на API
-    fetch('http://localhost:5000/api/v1/User/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(loginData)
-    })
-    .then(response => {
-        if (response.status === 200) {
-            // Если ответ успешен (код 200), получаем токен
-            return response.text();  // Читаем тело ответа как текст (токен)
-        } else if (response.status === 500) {
-            // Если сервер возвращает статус 500, выводим сообщение об ошибке
-            alert("Ошибка: Неверные данные для входа.");
-            return Promise.reject("Unauthorized");
-        } else {
-            // В случае других статусов — выводим сообщение об ошибке
-            return response.text().then(error => {
-                alert("Ошибка входа: " + error);
-                return Promise.reject(error);
-            });
-        }
-    })
-    .then(token => {
-        if (token) {
-            // Если токен получен, сохраняем его в localStorage
-            localStorage.setItem('token', token);  // Сохраняем токен
-            alert("Вход выполнен успешно!");
-        }
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
-    });
-}
-
 
     // Загрузка помп при первой загрузке страницы
     fetchfireplaces();

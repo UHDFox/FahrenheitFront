@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Водонагреватели</title>
+    <link href="styles.css" rel="stylesheet" type="text/css">
+    <style>
+        .form-container {
+            margin: 0 auto;
+            width: 75%;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+        .form-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .register-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .register-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4B9CD3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .login-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+        }
+        #productList {
+    display: block; /* Убираем flex, чтобы товары отображались построчно */
+    gap: 20px; /* Пространство между товарами */
+    overflow-y: auto; /* Добавляем вертикальную прокрутку */
+    height: 500px; /* Ограничиваем высоту контейнера, чтобы ползунок появился */
+}
+
+.product-item {
+    display: flex; /* Используем flexbox для выравнивания по горизонтали */
+    align-items: center; /* Вертикальное выравнивание */
+    gap: 20px; /* Пространство между изображением и текстом */
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+.product-item:hover {
+    background-color: #f0f0f0;
+}
+.product-item img {
+    width: 120px; /* Ограничиваем ширину изображения */
+    height: auto; /* Сохраняем пропорции */
+    border-radius: 5px; /* Добавляем скругление углов изображения */
+}
+
+.product-title,
+.product-price {
+    flex: 1; /* Эти элементы будут занимать оставшееся пространство */
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #4B9CD3;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 200px;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:active {
+    background-color: #003f7f; /* Темный цвет при нажатии */
+    transform: scale(0.98); /* Легкое уменьшение кнопки */
+}
+    </style>
+</head>
+<body>
+    <table width="100%" align="center" class="header">
+        <tr>
+            <td width="15%" align="left">
+                <a href="index.html">
+                    <img src="source/logo.png" alt="Логотип" class="logo">
+                </a>
+            </td>
+            <td align="center">
+                <h1 style="margin-top:35px" class="site-title">Фаренгейт</h1>
+                <p style="margin-bottom:15px; color:white; font-size: large;">Лучший магазин сантехники!</p>
+            </td>
+            <td width="21.5%" align="right">
+                <div class="login-block">
+                    <table width="100%">
+                        <tr>
+                            <td align="right">
+                                <input type="text" id="loginEmail" placeholder="логин" size="15" class="input-field">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <input type="password" id="loginPassword" placeholder="пароль" size="15" class="input-field">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <input type="submit" value="вход" class="submit-button" onclick="loginUser()">
+                                <a href="authorize.html" class="register-link">регистрация</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+    
+
+<table border="0" width="100%" cellpadding="2" class="nav-table">
+    <tr style="text-align: center;">
+        <td align="center" width="25%">
+            <a href="chapters/chapter1.html" class="nav-button" style="display: inline-block; width: 95%; text-align: center; padding: 8px; border-radius: 15px;">
+                Радиаторы отопления
+            </a>
+        </td>
+        <td align="center" width="25%">
+            <a href="chapters/chapter2.html" class="nav-button" style="display: inline-block; width: 95%; text-align: center;  padding: 8px; border-radius: 15px;">
+                Насосное оборудование
+            </a>
+        </td>
+        <td align="center" width="25%">
+            <a href="chapters/chapter3.html" class="nav-button" style="display: inline-block; width: 95%; text-align: center;  padding: 8px; border-radius: 15px;">
+                Водонагреватели
+            </a>
+        </td>
+        <td align="center" width="25%">
+            <a href="chapters/chapter4.html" class="nav-button" style="display: inline-block; width: 95%; text-align: center; padding: 8px; border-radius: 15px;">
+                Камины
+            </a>
+        </td>
+    </tr>
+</table>
+
+<div id="mainContent">
+    <table border="0" width="100%" cellpadding="25" align="center">
+        <tr>
+            
+            <td width="11%" class="sidebar" valign="top" align="center">
+                <ul class="nav-list">
+                    <li class = "nav-button" style="width:75%"><a href="sales.html" class="nav-button">Скидки</a></li>
+                    <li class = "nav-button" style="width:75%"><a href="geo.html" class="nav-button">Контакты</a></li>
+                    <li class = "nav-button" style="width:75%"><a href="guarantee.html" class="nav-button">Гарантии</a></li>
+                    <li class = "nav-button" style="width:75%"><a href="about_us.html" class="nav-button">О нас</a></li>
+                </ul>
+            </td>
+    <!--Основной контент-->
+            <td width="34%"  valign="center">
+                <div class="form-container">
+                    <h2 class="form-title">Поиск по товарам</h2>
+            
+                    <!-- Фильтр выбора типа товара -->
+                    <label for="productType">Тип товара:</label>
+                    <select id="productType" class="form-input">
+                        <option value="Radiator">Радиатор</option>
+                        <option value="waterBoiler">Водонагреватель</option>
+                        <option value="Fireplace">Камин</option>
+                        <option value="Pump">Насос</option>
+                    </select>
+            
+                    <!-- Поисковый запрос -->
+                    <label for="searchQuery">Поиск:</label>
+                    <input type="text" id="searchQuery" class="form-input" placeholder="Введите название товара">
+            
+                    <!-- Кнопка для фильтрации -->
+                    <button class="filter-button" onclick="fetchProducts()">Искать</button>
+
+
+                    <div id="productList" class="product-list"></div>
+                </div>
+                
+                
+            </td>
+    <!--Ьаннер правый -->
+            <td width="12%" valign="top" align="center" class="ads-container">
+                <strong>ПОИСК</strong>
+                <br>
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <!-- Поле ввода для поиска -->
+                    <input type="text" id="searchInput" style="margin-bottom: 5px;" value="" onkeyup="">
+                    
+                    <!-- Изображение с ссылкой на страницу фильтров -->
+                    <a href="search.html">
+                        <img src="source/tools.png" alt="Фильтры поиска" style="margin-left: 10px; cursor: pointer; height: 20px;">
+                    </a>
+                </div>
+            
+                <div class="ads-container">
+                    <a href="https://www.premium-plumbing.co.uk/toilets/" target="_blank">
+                        <img src="source/premiumPlumbing.jpg"
+                            alt="Пример сайта"
+                            class="ad-image">
+                    </a>
+                    <a href="https://www.americanplumbingflorida.com" target="_blank">
+                        <img src="source/american plumbing.jpg"
+                            alt="Пример сайта"
+                            class="ad-image">
+                    </a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<div class="footer">
+    <p>© 2024 Магазин сантехники Фаренгейт. Все права защищены.</p>
+</div>
+
+
+<!-- JavaScript для поиска -->
+<script type="module">
+
+    const config = {
+        apiUrl: 'http://localhost:5000/api'  // URL API для помп
+    };
+
+    import { 
+    searchText, loginUser, updateLoginBlock, logoutUser, 
+    openCartPopup, closeCartPopup, addItemToCart, clearCart, 
+    decreaseItemQuantity, increaseItemQuantity 
+} from '/utility.js';
+document.addEventListener('DOMContentLoaded', async function () {
+    // Обновляем блок входа при загрузке
+    await updateLoginBlock();
+
+    // Привязываем события к элементам
+    const loginButton = document.querySelector('.submit-button');
+    if (loginButton) {
+        loginButton.addEventListener('click', loginUser);
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', searchText);
+    }
+
+    const logoutButton = document.querySelector('.logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logoutUser);
+    }
+
+    const addToCartButton = document.querySelector('.add-to-cart-button');
+    if (addToCartButton) {
+        addToCartButton.addEventListener('click', () => {
+            // Предполагается, что waterBoiler объект доступен здесь
+            if (typeof radiator !== 'undefined') {
+                addItemToCart(radiator.id, radiator.name, radiator.price, radiator.imagePath);
+            } else {
+                console.error("Товар не найден");
+            }
+        });
+    }
+
+    // Привязка событий для пагинации
+    const nextPageButton = document.getElementById('NextPageButton');
+    if (nextPageButton) {
+        nextPageButton.addEventListener('click', getNextPage);
+        console.log('NextPageButton найден и обработчик добавлен');
+    }
+
+    const prevPageButton = document.getElementById('PrevPageButton');
+    if (prevPageButton) {
+        prevPageButton.addEventListener('click', getPrevPage);
+        console.log('PrevPageButton найден и обработчик добавлен');
+    }
+
+    window.fetchProducts = fetchProducts;
+
+    // Add event listener to the search button
+    const searchButton = document.querySelector('.filter-button');
+    if (searchButton) {
+        searchButton.addEventListener('click', fetchProducts);
+    }
+});
+
+/*function fetchProducts() {
+            const productType = document.getElementById('productType').value; // Получаем тип товара
+            const searchQuery = document.getElementById('searchQuery').value.trim(); // Получаем поисковый запрос
+
+            // Формируем URL запроса в зависимости от выбранного типа товара и поискового запроса
+            let url = `${config.apiUrl}/${productType}?limit=10&offset=0`;
+
+            if (searchQuery) {
+                url += `&search=${encodeURIComponent(searchQuery)}`;
+            }
+
+            // Выполняем запрос к API
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    displayProducts(data);
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('Произошла ошибка при получении товаров');
+                });
+        }
+
+        // Функция для отображения товаров
+        function displayProducts(products) {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = ''; // Очистить список товаров перед отображением новых
+
+            if (products.length === 0) {
+                productList.innerHTML = '<p>Товары не найдены</p>';
+                return;
+            }
+
+            // Перебор всех товаров и создание их карточек
+            products.list.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.classList.add('product-item');
+
+                // Создаем карточку товара
+                productItem.innerHTML = `
+                    <a href="${product.url}" target="_blank">
+                        <img src="${product.imagePath}" alt="${product.name}">
+                    </a>
+                    <div class="product-title">${product.name}</div>
+                    <div class="product-price">${product.price} ₽</div>
+                `;
+
+                // Добавляем товар в список
+                productList.appendChild(productItem);
+            });
+        }*/
+
+
+        // Fetch products and functions from API
+/*function fetchProducts() {
+    const productType = document.getElementById('productType').value; // Получаем тип товара
+    const searchQuery = document.getElementById('searchQuery').value.trim(); // Получаем поисковый запрос
+
+    // Формируем URL запроса в зависимости от выбранного типа товара и поискового запроса
+    let url = `${config.apiUrl}/${productType}?limit=10&offset=0`;
+
+    if (searchQuery) {
+        url += `&search=${encodeURIComponent(searchQuery)}`;
+    }
+
+    // Выполняем запрос к API
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            displayProducts(data);
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при получении товаров');
+        });
+}
+
+// Функция для отображения товаров и других функций сайта
+function displayProducts(data) {
+    const productList = document.getElementById('productList');
+    productList.innerHTML = ''; // Очистить список товаров перед отображением новых
+
+    // Check if we have a list of products
+    if (data.products && data.products.length === 0) {
+        productList.innerHTML = '<p>Товары не найдены</p>';
+        return;
+    }
+
+    // Display products
+    if (data.products && data.products.length > 0) {
+        data.products.forEach(product => {
+            const productItem = document.createElement('div');
+            productItem.classList.add('product-item');
+
+            // Создаем карточку товара
+            productItem.innerHTML = `
+                <a href="${product.url}" target="_blank">
+                    <img src="${product.imagePath}" alt="${product.name}">
+                </a>
+                <div class="product-title">${product.name}</div>
+                <div class="product-price">${product.price} ₽</div>
+            `;
+
+            // Добавляем товар в список
+            productList.appendChild(productItem);
+        });
+    }
+
+    // Display website functions (if provided)
+    if (data.functions && data.functions.length > 0) {
+        const functionListContainer = document.createElement('div');
+        functionListContainer.classList.add('function-list-container');
+
+        // Loop through functions and display each
+        data.functions.forEach(func => {
+            const functionItem = document.createElement('div');
+            functionItem.classList.add('function-item');
+
+            // Add function name or description
+            functionItem.innerHTML = `
+                <div class="function-title">${func.name}</div>
+                <div class="function-description">${func.description}</div>
+            `;
+
+            // Add the function to the list
+            functionListContainer.appendChild(functionItem);
+        });
+
+        // Append the functions container after products
+        productList.appendChild(functionListContainer);
+    }
+}*/
+
+// Fetch products and functions from API
+function fetchProducts() {
+    const productType = document.getElementById('productType').value; // Получаем тип товара
+    const searchQuery = document.getElementById('searchQuery').value.trim(); // Получаем поисковый запрос
+
+    // Формируем URL запроса в зависимости от выбранного типа товара и поискового запроса
+    let url = `${config.apiUrl}/${productType}?limit=10&offset=0`;
+
+    if (searchQuery) {
+        url += `&search=${encodeURIComponent(searchQuery)}`;
+    }
+
+    // Выполняем запрос к API
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            displayProducts(data);
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при получении товаров');
+        });
+}
+
+// Функция для отображения товаров и других функций сайта
+function displayProducts(data) {
+    const productList = document.getElementById('productList');
+    productList.innerHTML = ''; // Очистить список товаров перед отображением новых
+
+    // Check if we have a list of products
+    if (data.products && data.products.length === 0) {
+        productList.innerHTML = '<p>Товары не найдены</p>';
+        return;
+    }
+
+    // Display products
+    if (data.list && data.list.length > 0) {
+        data.list.forEach(product => {
+            const productItem = document.createElement('div');
+            productItem.classList.add('product-item');
+
+            // Создаем карточку товара
+            productItem.innerHTML = `
+                <img src="http://localhost:5000${product.imagePath}" alt="${product.imagePath}">
+                <div class="product-title">${product.name}</div>
+                <div class="product-price">${product.price} ₽</div>
+                <button class="button" onclick="addItemToCart('${product.id}', '${product.name}', ${product.price}, '${product.imagePath}')">Добавить в корзину</button>
+            `;
+
+            // Добавляем товар в список
+            productItem.addEventListener('click', () => {
+        openPopup(product);  // Открытие попапа с деталями радиатора
+    });
+            productList.appendChild(productItem);
+        });
+    }
+
+    
+    let input = document.getElementById('searchQuery').value.toLowerCase();
+    let mainContent = document.getElementById('mainContent');
+
+    // Убираем ранее выделенный текст
+    let cleanedContent = mainContent.innerHTML.replace(/<mark>(.*?)<\/mark>/g, '$1');
+
+    // Если поиск пустой, сбрасываем контент
+    if (input.length === 0) {
+        mainContent.innerHTML = cleanedContent;
+        return;
+    }
+
+    let regex = new RegExp(`(${input})`, 'gi'); // Создаем регулярное выражение для поиска текста
+
+    // Выделяем найденный текст
+    let highlightedContent = cleanedContent.replace(regex, '<mark>$1</mark>');
+    mainContent.innerHTML = highlightedContent;
+
+    // Поиск кнопок с совпадением текста
+    const buttons = document.querySelectorAll('button, a, .nav-button'); // Все кнопки и ссылки
+    const searchResults = [];
+
+    buttons.forEach(button => {
+        const buttonText = button.textContent.trim().toLowerCase();
+
+        // Если текст кнопки совпадает с поисковым запросом, добавляем её в результаты
+        if (buttonText.includes(input)) {
+            searchResults.push(button);
+        }
+    });
+
+    // Если найдены кнопки с совпадением, отображаем их как элементы поиска
+    if (searchResults.length > 0) {
+        const functionListContainer = document.createElement('div');
+        functionListContainer.classList.add('function-list-container');
+        
+        searchResults.forEach(button => {
+            const functionItem = document.createElement('div');
+            functionItem.classList.add('function-item');
+
+            // Создаем элемент для кнопки
+            functionItem.innerHTML = `
+                <button class="search-function-button">${button.textContent}</button>
+            `;
+
+            // Добавляем найденную кнопку в список
+            functionListContainer.appendChild(functionItem);
+        });
+
+        // Добавляем найденные элементы после товаров
+        productList.appendChild(functionListContainer);
+    }
+    /*// Display website functions (if provided)
+    if (data.functions && data.functions.length > 0) {
+        const functionListContainer = document.createElement('div');
+        functionListContainer.classList.add('function-list-container');
+
+        // Loop through functions and display each
+        data.functions.forEach(func => {
+            const functionItem = document.createElement('div');
+            functionItem.classList.add('function-item');
+
+            // Add function name or description
+            functionItem.innerHTML = `
+                <div class="function-title">${func.name}</div>
+                <div class="function-description">${func.description}</div>
+            `;
+
+            // Add the function to the list
+            functionListContainer.appendChild(functionItem);
+        });
+
+        // Append the functions container after products
+        productList.appendChild(functionListContainer);
+    }*/
+}
+window.displayProducts = displayProducts
+</script>
+
+
+</body>
+</html>
+

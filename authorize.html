@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Водонагреватели</title>
-    <link href="../fahrenheit/styles.css" rel="stylesheet" type="text/css">
+    <link href="styles.css" rel="stylesheet" type="text/css">
     <style>
         .form-container {
             margin: 0 auto;
@@ -41,6 +41,77 @@
             text-align: center;
             margin-top: 15px;
         }
+
+        .modal {
+    display: none; /* По умолчанию скрыто */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Контейнер содержимого модального окна */
+.modal-content {
+    position: relative;
+    margin: 5% auto;
+    padding: 20px;
+    background: white;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Закрывающая кнопка */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Просмотрщик PDF */
+.pdf-viewer {
+    width: 100%;
+    height: 500px;
+    border: none;
+}
+
+/* Кнопка для скачивания */
+.download-link {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+    padding: 10px;
+    background-color: #4B9CD3;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.download-link:hover {
+    background-color: #0056b3;
+}
+
+.popup-close {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: larger;
+}
     </style>
 </head>
 <body>
@@ -128,9 +199,17 @@
                         <input type="email" name="email" placeholder="Электронная почта" class="register-input" required>
                         <input type="password" name="password" placeholder="Пароль" class="register-input" required>
                         <input type="password" name="confirm_password" placeholder="Подтвердите пароль" class="register-input" required>
+                        
+                        <div id="pdfModal" class="modal" style="display:none">
+                            <div class="modal-content">
+                                <span class="popup-close" onclick="closeModal()">&times;</span>
+                                <iframe src="oferta.pdf" class="pdf-viewer" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                            
                         <label>
                             <input type="checkbox" name="agree" required>
-                            Я согласен(на) с <a href="https://farengeit-online.ru/agreement/" target="_blank">политикой обработки персональных данных</a>.
+                            Я согласен(на) с <a href="#" onclick="openModal()">политикой обработки персональных данных</a>.
                         </label>
                         <br>
                         <button type="button" onclick="registerUser()" style="margin-top: 45px;" class="register-button">Зарегистрироваться</button>
@@ -141,23 +220,27 @@
     <!--Ьаннер правый -->
             <td width="12%" valign="top" align="center" class="ads-container">
                 <strong>ПОИСК</strong>
-                <br><input type="text" id="searchInput"style="margin-bottom: 5px;" value="" onkeyup=""><br>
-                <input type="button" onclick="searchText()" style="font-weight: bold;" value="поиск"><br><br>
+                <br>
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <!-- Поле ввода для поиска -->
+                    <input type="text" id="searchInput" style="margin-bottom: 5px;" value="" onkeyup="">
+                    
+                    <!-- Изображение с ссылкой на страницу фильтров -->
+                    <a href="search.html">
+                        <img src="source/tools.png" alt="Фильтры поиска" style="margin-left: 10px; cursor: pointer; height: 20px;">
+                    </a>
+                </div>
+            
                 <div class="ads-container">
                     <a href="https://www.premium-plumbing.co.uk/toilets/" target="_blank">
                         <img src="source/premiumPlumbing.jpg"
-                             alt="Пример сайта"
-                             class="ad-image">
+                            alt="Пример сайта"
+                            class="ad-image">
                     </a>
                     <a href="https://www.americanplumbingflorida.com" target="_blank">
                         <img src="source/american plumbing.jpg"
-                             alt="Пример сайта"
-                             class="ad-image">
-                    </a>
-                    <a href="https://ukbathroomstore.co.uk/?srsltid=AfmBOor4c0OGMmLlAZLYVcwGSjImeYjqfPFB8TqIF5rymqOQNr2b2hWF" target="_blank">
-                        <img src="source/spidertoilet.jpg"
-                             alt="Пример сайта"
-                             class="ad-image">
+                            alt="Пример сайта"
+                            class="ad-image">
                     </a>
                 </div>
             </td>
@@ -174,6 +257,15 @@
 <!-- JavaScript для поиска -->
 <script>
 
+function openModal() {
+    const modal = document.getElementById('pdfModal');
+    modal.style.display = 'block';
+}
+
+function closeModal() {
+    const modal = document.getElementById('pdfModal');
+    modal.style.display = 'none';
+}
 
 function searchText() {
     // Получаем введенный текст

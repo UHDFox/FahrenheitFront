@@ -85,7 +85,7 @@
                         <tr>
                             <td align="right">
                                 <input type="submit" value="вход" class="submit-button" onclick="loginUser()">
-                                <a href="authorize.html" class="register-link">регистрация</a>
+                                <a href="../authorize.html" class="register-link">регистрация</a>
                             </td>
                         </tr>
                     </table>
@@ -156,32 +156,36 @@
                     
                         <!-- Пагинация -->
                         <div class="pagination">
-                            <button id="PrevPageButton" onclick="getPrevPage()" disabled>Предыдущая страница</button>
-                            <span id="PageCounter">1</span>
-                            <button id="NextPageButton" onclick="getNextPage()" disabled>Следующая страница</button>
+                            <button id="PrevPageButton" disabled>Предыдущая страница</button>
+                            <span id="PageCounter" style="display: block; margin-left: auto; margin-right: auto; text-align: center;">1</span>
+                            <button id="NextPageButton" disabled>Следующая страница</button>
                         </div>
                     </div>
             </td>
     <!--Ьаннер правый -->
             <td width="12%" valign="top" align="center" class="ads-container">
                 <strong>ПОИСК</strong>
-                <br><input type="text" id="searchInput"style="margin-bottom: 5px;" value="" onkeyup=""><br>
-                <input type="button" onclick="searchText()" style="font-weight: bold;" value="поиск"><br><br>
+                <br>
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <!-- Поле ввода для поиска -->
+                    <input type="text" id="searchInput" style="margin-bottom: 5px;" value="" onkeyup="">
+                    
+                    <!-- Изображение с ссылкой на страницу фильтров -->
+                    <a href="../search.html">
+                        <img src="../source/tools.png" alt="Фильтры поиска" style="margin-left: 10px; cursor: pointer; height: 20px;">
+                    </a>
+                </div>
+            
                 <div class="ads-container">
                     <a href="https://www.premium-plumbing.co.uk/toilets/" target="_blank">
                         <img src="../source/premiumPlumbing.jpg"
-                             alt="Пример сайта"
-                             class="ad-image">
+                            alt="Пример сайта"
+                            class="ad-image">
                     </a>
                     <a href="https://www.americanplumbingflorida.com" target="_blank">
                         <img src="../source/american plumbing.jpg"
-                             alt="Пример сайта"
-                             class="ad-image">
-                    </a>
-                    <a href="https://ukbathroomstore.co.uk/?srsltid=AfmBOor4c0OGMmLlAZLYVcwGSjImeYjqfPFB8TqIF5rymqOQNr2b2hWF" target="_blank">
-                        <img src="../source/spidertoilet.jpg"
-                             alt="Пример сайта"
-                             class="ad-image">
+                            alt="Пример сайта"
+                            class="ad-image">
                     </a>
                 </div>
             </td>
@@ -196,15 +200,70 @@
 
 
 <!-- JavaScript для поиска -->
-<script>
+<script type="module">
+
+
+import { 
+    searchText, loginUser, updateLoginBlock, logoutUser, 
+    openCartPopup, closeCartPopup, addItemToCart, clearCart, 
+    decreaseItemQuantity, increaseItemQuantity 
+} from '../utility.js';
+
+document.addEventListener('DOMContentLoaded', async function () {
+    // Обновляем блок входа при загрузке
+    await updateLoginBlock();
+
+    // Привязываем события к элементам
+    const loginButton = document.querySelector('.submit-button');
+    if (loginButton) {
+        loginButton.addEventListener('click', loginUser);
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', searchText);
+    }
+
+    const logoutButton = document.querySelector('.logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logoutUser);
+    }
+
+    const addToCartButton = document.querySelector('.add-to-cart-button');
+    if (addToCartButton) {
+        addToCartButton.addEventListener('click', () => {
+            // Предполагается, что waterBoiler объект доступен здесь
+            if (typeof waterBoiler !== 'undefined') {
+                addItemToCart(waterBoiler.id, waterBoiler.name, waterBoiler.price, waterBoiler.imagePath);
+            } else {
+                console.error("Объект waterBoiler не найден");
+            }
+        });
+    }
+
+    // Привязка событий для пагинации
+    const nextPageButton = document.getElementById('NextPageButton');
+    if (nextPageButton) {
+        nextPageButton.addEventListener('click', getNextPage);
+        console.log('NextPageButton найден и обработчик добавлен');
+    }
+
+    const prevPageButton = document.getElementById('PrevPageButton');
+    if (prevPageButton) {
+        prevPageButton.addEventListener('click', getPrevPage);
+        console.log('PrevPageButton найден и обработчик добавлен');
+    }
+});
+
 const config = {
-    apiUrl: 'http://localhost:5000/api'  // URL API для помп
+    apiUrl: 'http://localhost:5000/api/'  // URL API для помп
 };
 
 let offset = 0;  // Смещение для пагинации
 const limit = 4;  // Количество элементов на странице
 let pageCounter = 1;  // Счетчик текущей страницы
 let isLoading = false;  // Признак загрузки данных
+
 
 // Функция для загрузки помп с API
 async function fetchwaterBoilers() {
@@ -213,7 +272,7 @@ async function fetchwaterBoilers() {
 
     try {
         // Выполняем запрос к API с учетом offset и limit
-        const response = await fetch(`${config.apiUrl}/WaterBoiler?offset=${offset}&limit=${limit}`);
+        const response = await fetch(`${config.apiUrl}WaterBoiler?offset=${offset}&limit=${limit}`);
 
         if (!response.ok) {
             throw new Error('Ошибка сервера');
@@ -223,6 +282,7 @@ async function fetchwaterBoilers() {
 
         // Очистка контейнера перед добавлением новых данных
         const container = document.getElementById('waterBoilersContainer');
+        console.log("Контейнер waterBoilersContainer найден.");
         container.innerHTML = ''; // Очищаем контейнер перед добавлением
 
         if (data.list.length > 0) {
@@ -297,6 +357,8 @@ function createwaterBoilerCell(waterBoiler) {
 
     return cell;
 }
+
+
 function openPopup(waterBoiler) {
     // Создаём попап
     const popup = document.createElement('div');
@@ -304,13 +366,14 @@ function openPopup(waterBoiler) {
 
     popup.innerHTML = `
     <div class="popup-content">
-            <button class="popup-close" onclick="closePopup()">X</button>
+            <button class="popup-close" onclick="closeCartPopup()">X</button>
             <h2>${waterBoiler.name}</h2>
             <img src="http://localhost:5000${waterBoiler.imagePath}" class="product-image" alt="Image of ${waterBoiler.name}">
             <p><strong>Цена:</strong> ${waterBoiler.price} руб.</p>
             <p><strong>Материал:</strong> ${waterBoiler.material}</p>
             <p><strong>Макс. температура:</strong> ${waterBoiler.maxTemperature}°C</p>
             <p><strong>Описание:</strong> ${waterBoiler.description}</p>
+            <button onclick="addItemToCart('${waterBoiler.id}', '${waterBoiler.name}', ${waterBoiler.price}, '${waterBoiler.imagePath}')">Добавить в корзину</button>
         </div>
     `;
 
@@ -319,20 +382,13 @@ function openPopup(waterBoiler) {
     document.body.style.overflow = 'hidden';  // Блокируем прокрутку страницы при открытом попапе
 }
 
-// Функция для закрытия попапа
-function closePopup() {
-    const popup = document.querySelector('.popup');
-    if (popup) {
-        popup.remove();
-    }
-    document.body.style.overflow = '';  // Восстанавливаем прокрутку страницы
-}
 
 // Функция для перехода на следующую страницу
 async function getNextPage() {
     if (!isLoading) {  // Если не идет загрузка
         offset += limit;  // Увеличиваем смещение для следующей страницы
         pageCounter += 1;  // Увеличиваем счетчик страницы
+        console.log('Запрос следующей страницы:', { pageCounter, offset });
         const table = document.querySelector('#waterBoilerProducts');  // Если в таблице 4 или более строки
         table.innerHTML = "";  // Очищаем таблицу
         await fetchwaterBoilers();  // Загружаем следующую страницу помп
@@ -351,7 +407,7 @@ async function getPrevPage() {
 }
 
 // Функция для поиска и подсветки текста
-function searchText() {
+/*function searchText() {
     // Получаем введенный текст
     let input = document.getElementById('searchInput').value.toLowerCase();
     let mainContent = document.getElementById('mainContent');
@@ -373,10 +429,10 @@ function searchText() {
     
     // Обновляем содержимое
     mainContent.innerHTML = highlightedContent;
-}
+}*/
 
 
-function loginUser() {
+/*function loginUser() {
     // Получаем значения полей логина и пароля
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
@@ -427,7 +483,7 @@ function loginUser() {
     .catch(error => {
         console.error('Ошибка:', error);
     });
-}
+}*/
 
 
 // Загрузка помп при первой загрузке страницы

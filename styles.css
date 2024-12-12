@@ -169,3 +169,274 @@ body {
     font-size: 16px;
     cursor: pointer;
 }
+
+.popup {
+    position: fixed;
+    width: 800px;
+    max-height: 80%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Центрирование */
+    z-index: 10000; /* Убедитесь, что попап поверх других элементов */
+}
+
+.cartPopupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999; /* Наложение на попап */
+}
+
+.popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.popup-image {
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0;
+}
+
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.popup-close:hover {
+    background: darkred;
+}
+
+
+#cartItemsContainer {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 50px;
+    padding: 25px; /* Внутренний отступ внутри контейнера */
+}
+
+/* Общая сумма */
+#cartTotal {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: right;
+}
+
+.cart-item-details {
+    display: flex;
+    align-items: center;
+}
+
+.cart-item-image {
+    width: 50px; /* Задайте нужный размер */
+    height: 50px;
+    object-fit: cover; /* Обрезка изображения, если оно слишком большое */
+    margin-right: 10px; /* Расстояние между изображением и текстом */
+}
+
+.popup-close {
+    display: flex; /* Используем Flexbox */
+    justify-content: center; /* Центрируем по горизонтали */
+    align-items: center; /* Центрируем по вертикали */
+    width: 30px; /* Ширина кнопки */
+    height: 30px; /* Высота кнопки */
+    background-color: #f5f5f5; /* Цвет фона */
+    color: #333; /* Цвет текста/иконки */
+    border: 1px solid #ccc; /* Граница */
+    border-radius: 50%; /* Закруглённая форма */
+    font-size: 12px; /* Размер текста */
+    cursor: pointer; /* Курсор указателя */
+    transition: background-color 0.3s ease; /* Плавное изменение цвета фона */
+}
+
+.popup-close:hover {
+    background-color: #e0e0e0; /* Цвет фона при наведении */
+    color: #000; /* Цвет текста при наведении */
+}
+
+.decrease-btn,
+.increase-btn {
+    display: flex; /* Используем flexbox */
+    justify-content: center; /* Выравнивание текста по горизонтали */
+    align-items: center; /* Выравнивание текста по вертикали */
+    width: 40px; /* Ширина кнопки */
+    height: 30px; /* Высота кнопки */
+    background-color: #4B9CD3; /* Синий цвет кнопки */
+    color: #fff; /* Белый цвет текста */
+    border: none; /* Без границ */
+    border-radius: 4px; /* Слегка закругленные края */
+    font-size: 14px; /* Размер текста */
+    font-weight: bold; /* Жирный текст */
+    cursor: pointer; /* Курсор указателя */
+    margin-right: 5px; /* Отступ между кнопками */
+    transition: background-color 0.3s ease; /* Плавный переход цвета */
+}
+
+
+.decrease-btn:hover,
+.increase-btn:hover {
+    background-color: #0056b3; /* Темно-синий цвет при наведении */
+}
+
+.item-quantity {
+    display: inline-flex; /* Используем inline-flex для выравнивания текста */
+    justify-content: center; /* Центрирование текста по горизонтали */
+    align-items: center; /* Центрирование текста по вертикали */
+    width: 40px; /* Ширина блока */
+    height: 30px; /* Высота блока */
+    font-size: 14px; /* Размер текста */
+    font-weight: bold; /* Жирный текст */
+    color: #333; /* Цвет текста */
+    background-color: #f9f9f9; /* Светлый фон */
+    border: 1px solid #ccc; /* Граница вокруг блока */
+    border-radius: 4px; /* Закругленные углы */
+    margin: 0 5px; /* Отступы для разделения блока и кнопок */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Легкая внутренняя тень */
+}
+
+.quantity-container {
+    display: flex; /* Устанавливаем Flexbox */
+    align-items: center; /* Выравнивание элементов по центру вертикали */
+    gap: 5px; /* Расстояние между элементами */
+}
+.total-counter{
+    margin-top:15px;
+}
+button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #4B9CD3;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:active {
+    background-color: #003f7f; /* Темный цвет при нажатии */
+    transform: scale(0.98); /* Легкое уменьшение кнопки */
+}
+
+.carousel-container {
+    position: relative;
+    width: 300px; /* Задайте фиксированную ширину, например, 600px, если нужно */
+    max-width: 300px; /* Максимальная ширина для удобства на разных экранах */
+    height: 200px; /* Небольшая высота карусели */
+    max-height: 400px;
+    overflow: hidden; /* Скрывает выходящие за границы элементы */
+    margin: auto; /* Центрирует карусель */
+    border: 1px solid #ddd; /* Дополнительный стиль */
+    border-radius: 10px; /* Скругленные края */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Тень для красоты */
+}
+
+.carousel-images {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    height: 25%;
+    width: calc(75% * 4); /* Ширина всех слайдов (4 картинки) */
+}
+
+.carousel-image {
+    width: 25%; /* Каждое изображение занимает ширину контейнера */
+    height: 25%; /* Высота соответствует контейнеру */
+    object-fit: cover; /* Уменьшает изображение, чтобы оно полностью влезло */
+    flex-shrink: 0;
+}
+
+
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 18px;
+}
+
+.carousel-button.prev {
+    left: 10px;
+}
+
+.carousel-button.next {
+    right: 10px;
+}
+
+.carousel-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.slider {
+    width: 600px;
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+    margin: auto;
+    border-radius: 10px;
+  }
+  
+  /* Контейнер для всех слайдов */
+  .slides {
+    display: flex;
+    width: calc(1000px * 4); /* Ширина = ширина слайда * количество слайдов */
+    animation: slide-animation 10s infinite;
+  }
+  
+  /* Стиль для каждого слайда */
+  .slide {
+    width: 1000px; /* Фиксированная ширина слайда */
+    height: 400px; /* Фиксированная высота слайда */
+    flex-shrink: 0;
+  }
+  
+  .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Картинка будет адаптироваться под размер слайда */
+  }
+  
+  /* Анимация автосмены слайдов */
+  @keyframes slide-animation {
+    0% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-600px);
+    }
+    50% {
+      transform: translateX(-1200px);
+    }
+    75% {
+      transform: translateX(-1800px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }

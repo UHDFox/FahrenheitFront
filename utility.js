@@ -64,7 +64,7 @@ export function toggleFeedbackForm() {
     if (isAuthenticated()) {
         feedbackForm.style.display = 'block';  // Show form if authenticated
     } else {
-        feedbackForm.style.display = 'none';  // Hide form if not authenticated
+        feedbackForm.style.display = 'block';  // Hide form if not authenticated
     }
 }
 
@@ -214,7 +214,7 @@ export async function updateLoginBlock() {
                 <input type="text" id="loginEmail" class="input-field" placeholder="Email">
                 <input type="password" id="loginPassword" class="input-field" placeholder="Пароль">
                 <button type="button" class="submit-button" onclick="loginUser()">Войти</button>
-                <a href="authorize.html" class="register-link">Регистрация</a>
+                <a href="/authorize.html" class="register-link">Регистрация</a>
             </form>
         `;
     }
@@ -277,8 +277,23 @@ export function openCartPopup() {
     const checkoutButton = document.createElement('button');
     checkoutButton.id = 'checkoutButton';
     checkoutButton.textContent = 'Оформить заказ';
-
+    checkoutButton.addEventListener('click', () => {
+        clearCart();
+        checkout(); // Очистка корзины при нажатии на кнопку
+    });
     
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.display = 'flex';
+    buttonContainer.style.flexDirection = 'column';
+    buttonContainer.style.alignItems = 'center';
+    buttonContainer.style.marginTop = '20px';
+
+    // Добавляем кнопки в контейнер
+    buttonContainer.appendChild(checkoutButton);
+    buttonContainer.appendChild(clearCartButton);
+
+    // Добавляем контейнер в попап
+    popup.appendChild(buttonContainer);
 
     // Добавляем все элементы в попап
     popup.appendChild(closeButton);
@@ -443,11 +458,46 @@ export function decreaseItemQuantity(id) {
 export function checkout() {
     if (JSON.parse(localStorage.getItem('cart')).length === 0) {
     } else {
-        window.location.href = 'checkout.html'; // Переход на страницу оформления заказа
+        window.location.href = '/checkout.html'; // Переход на страницу оформления заказа
     }
 }
 
 
+// Next/previous controls
+export function plusSlides(n) {
+    showSlides(slideIndex += n);
+  }
+  
+  // Thumbnail image controls
+export   function currentSlide(n) {
+    showSlides(slideIndex = n);
+  }
+  
+  function showSlides(n) {
+    let i;
+    let slides = document.getElementsByClassName("mySlides");
+    let dots = document.getElementsByClassName("dot");
+    if (n > slides.length) {slideIndex = 1}
+    if (n < 1) {slideIndex = slides.length}
+    for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+    }
+    for (i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+    }
+    slides[slideIndex-1].style.display = "block";
+    dots[slideIndex-1].className += " active";
+  }
+
+
+
+  window.currentSlide = function (n) {
+    showSlides(slideIndex = n);
+};
+
+window.plusSlides = function (n) {
+    showSlides(slideIndex += n);
+};
 
 window.loginUser = loginUser;
 window.logoutUser = logoutUser;
@@ -456,3 +506,5 @@ window.closeCartPopup = closeCartPopup;
 window.addItemToCart = addItemToCart;
 window.increaseItemQuantity = increaseItemQuantity;
 window.decreaseItemQuantity = decreaseItemQuantity;
+window.plusSlides = plusSlides;
+window.currentSlide = currentSlide;

@@ -84,7 +84,7 @@
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="submit" value="вход" class="submit-button" onclick="loginUser()">
+                                <input type="submit" value="Войти" class="submit-button" onclick="loginUser()">
                                 <a href="../authorize.html" class="register-link">регистрация</a>
                             </td>
                         </tr>
@@ -155,7 +155,7 @@
                     <!-- Пагинация -->
                     <div class="pagination">
                         <button id="PrevPageButton" onclick="getPrevPage()" disabled>Предыдущая страница</button>
-                        <span id="PageCounter">1</span>
+                        <span id="PageCounter" style="display: block; margin-left: auto; margin-right: auto; text-align: center;">1</span>
                         <button id="NextPageButton" onclick="getNextPage()" disabled>Следующая страница</button>
                     </div>
                 </div>
@@ -360,18 +360,35 @@ function openPopup(pump) {
     popup.classList.add('popup');  // Добавляем класс для стилизации
 
     // Содержимое попапа
-    popup.innerHTML = `
-        <div class="popup-content">
-            <button class="popup-close" onclick="closeCartPopup()">X</button>
-            <h2>${pump.name}</h2>
-            <img src="http://localhost:5000${pump.imagePath}" class="popup-image" alt="Image of ${pump.name}">
-            <p><strong>Цена:</strong> ${pump.price} руб.</p>
-            <p><strong>Мощность обогрева:</strong> ${pump.powerSupply} Вт</p>
-            <p><strong>Давление:</strong> ${pump.pressure} Вт</p>
-            <p><strong>Описание:</strong> ${pump.description || 'Описание не доступно.'}</p>
-            <button onclick="addItemToCart('${pump.id}', '${pump.name}', ${pump.price}, '${pump.imagePath}')">Добавить в корзину</button>
+
+
+popup.innerHTML = `
+    <div class="popup-content" style="display: flex; flex-direction: column; align-items: center; max-height: 80%; width: 90%; max-width: 800px; padding: 20px; background-color: white; border-radius: 8px; overflow: auto; box-sizing: border-box;">
+        <button style="background-color: #4B9CD3; color: white; border: none; border-radius: 5px; padding: 5px 5px; cursor: pointer; align-self: flex-end;" 
+                class="popup-close" 
+                onclick="closeCartPopup()">X</button>
+        <h2 style="text-align: center; margin-bottom: 10px;">${pump.name}</h2>
+        <img src="http://localhost:5000${pump.imagePath}" 
+             class="popup-image" 
+             alt="Image of ${pump.name}" 
+             style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px;">
+             <p style="margin-bottom: 1px"><strong>Бренд:</strong> ${pump.brand}</p>
+        <p style="margin-bottom: 1px"><strong>Цена:</strong> ${pump.price} руб.</p>
+        <p style="margin-bottom: 1px"><strong>Мощность втягивания:</strong> ${pump.powerSupply}</p>
+        <p style="margin-bottom: 1px"><strong>Давление:</strong> ${pump.pressure}</p>
+        
+        <!-- Контейнер для описания с прокруткой -->
+        <div style="min-height: 80px; height: 300px; overflow-y: auto; word-wrap: break-word; width: 100%; box-sizing: border-box; border: 1px solid #ccc; padding: 10px; border-radius: 5px; line-height: 1.5; font-size: 14px; margin-bottom: 5px;">
+            <p style="margin: 0;"><strong>Описание:</strong> ${pump.description || 'Описание не доступно.'}</p>
         </div>
-    `;
+        
+        <!-- Кнопка добавления в корзину с адаптивной шириной -->
+        <button style="width: 90%; max-width: 200px; padding: 10px; font-size: 14px; display: block; background-color: #4B9CD3; color: white; border: none; border-radius: 5px; cursor: pointer;margin-bottom: 5px;" 
+                onclick="addItemToCart('${pump.id}', '${pump.name}', ${pump.price}, '${pump.imagePath}')">
+            Добавить в корзину
+        </button>
+    </div>
+`;
 
     // Добавляем попап на страницу
     document.body.appendChild(popup);

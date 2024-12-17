@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Страница оплаты</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .payment-wrapper {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .payment-wrapper h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            border-color: #007bff;
+        }
+
+        .payment-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: #fff;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .payment-button:hover {
+            background-color: #007bff;
+        }
+
+        .payment-footer {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 20px;
+            color: #888;
+        }
+
+        .payment-footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .payment-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .back-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+<div class="payment-wrapper">
+    <h1>Оплата</h1>
+
+    <form action="/process_payment" method="POST">
+        <!-- Номер карты -->
+        <div class="form-group">
+            <label for="cardNumber">Номер карты</label>
+            <input type="text" id="cardNumber" name="cardNumber" placeholder="0000 0000 0000 0000" required>
+        </div>
+
+        <!-- Срок действия карты -->
+        <div class="form-group">
+            <label for="expiryDate">Срок действия (MM/YY)</label>
+            <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
+        </div>
+
+        <!-- CVV код -->
+        <div class="form-group">
+            <label for="cvv">CVV</label>
+            <input type="text" id="cvv" name="cvv" placeholder="123" required>
+        </div>
+
+        <!-- Имя владельца карты -->
+        <div class="form-group">
+            <label for="cardHolder">Имя владельца карты</label>
+            <input type="text" id="cardHolder" name="cardHolder" placeholder="Иван Иванов" required>
+        </div>
+
+       
+    </form>
+     <!-- Кнопка назад -->
+     <button type="submit" class="payment-button">Оплатить</button>
+     <a href="index.html">
+     <button type="submit" class="back-button">Назад</button>
+     </a>
+
+    <div class="payment-footer">
+        <p>Используя эту страницу, вы соглашаетесь с <a href="#">условиями использования</a>.</p>
+    </div>
+</div>
+
+</body>
+</html>

@@ -32,7 +32,7 @@
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="submit" value="вход" class="submit-button" onclick="loginUser()">
+                                <input type="submit" value="Войти" class="submit-button" style="width: 100%;" onclick="loginUser()">
                                 <a href="authorize.html" class="register-link">регистрация</a>
                             </td>
                         </tr>
@@ -102,9 +102,9 @@
             <p align="center">Вы можете посмотреть карту подробнее, перейдя по <a href="https://yandex.ru/maps/org/farengeyt/104731423778/?ll=37.762714%2C55.631008&mode=search&sctx=ZAAAAAgBEAAaKAoSCYnUtItp6kJAESFAho4d5ktAEhIJ2h1SDJCo%2Fz8RwcQfRZ055T8iBgABAgMEBSgKOABA1QFIAWoCcnWdAc3MzD2gAQCoAQC9AdP0dyPCAQui6OqThgPi0vv3A4ICEtCk0LDRgNC10L3Qs9C10LnRgooCAJICAJoCDGRlc2t0b3AtbWFwcw%3D%3D&sll=37.607017%2C55.631008&sspn=0.989326%2C0.333065&text=%D0%A4%D0%B0%D1%80%D0%B5%D0%BD%D0%B3%D0%B5%D0%B9%D1%82&z=10.76" 
                 target="_blank">ссылке на Яндекс.Карты</a>.</p>
 
-
-                <div class="feedback-form" style="width: 100%; margin-top: 20px; text-align: center; background-color: #f9f9f9; border-radius: 5px; border: black 1px;">
-                    <h2>Обратная связь</h2>
+                <h2 style="text-align: center;">Обратная связь</h2>
+                <div class="feedback-form" style="display: flex; justify-content: center; align-items: center; width: 100%; margin-top: 20px; text-align: center; background-color: #f9f9f9; border-radius: 5px; border: black 1px;">
+                    
                     <form action="/submit_feedback" method="post" id="feedbackForm"style="display: inline-block; text-align: left;">
                         <label for="name">Имя:</label><br>
                         <input type="text" id="name" name="name" size="40" required><br><br>
@@ -163,6 +163,47 @@
             document.querySelector('input[type="submit"]').addEventListener('click', loginUser);
             document.getElementById('searchInput').addEventListener('keyup', searchText);
     });
+
+    const form = document.getElementById('feedbackForm');
+
+// Listen for form submission
+if (form) {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Prevent the default form submission (это остановит переход на другую страницу)
+        
+        // Get the message from the form
+        const message = document.getElementById('message').value;
+        const mail = document.getElementById('email').value;
+
+        // Prepare the data for the request
+        const feedbackData = {
+            message: message,
+            email: mail
+        };
+
+        try {
+            // Send the feedback data as a POST request to your API
+            const response = await fetch('http://localhost:5000/api/Feedback/createFeedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(feedbackData),  // Send the message as the request body
+            });
+
+            if (response.ok) {
+                const responseData = await response.json();
+                alert('Отзыв отправлен успешно!');
+                console.log('Response:', responseData); // Optionally log the response data
+            } else {
+                alert('Произошла ошибка при отправке отзыва');
+            }
+        } catch (error) {
+            alert('Произошла ошибка при отправке запроса');
+            console.error('Error:', error);
+        }
+    });
+}
 </script>
 </body>
 </html>

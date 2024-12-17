@@ -7,7 +7,7 @@
     <style>
         .form-container {
             margin: 0 auto;
-            width: 75%;
+            width: 750px;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 10px;
@@ -69,21 +69,11 @@
     border-radius: 5px; /* Добавляем скругление углов изображения */
 }
 
-.product-title,
 .product-price {
-    flex: 1; /* Эти элементы будут занимать оставшееся пространство */
+    font-size: 18px; /* Настройка размера шрифта */
+    font-weight: bold; /* Делаем цену жирной */
 }
 
-button {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #4B9CD3;
-    color: white;
-    border: none;
-    cursor: pointer;
-    width: 200px;
-    border-radius: 5px;
-}
 
 button:hover {
     background-color: #0056b3;
@@ -93,6 +83,44 @@ button:active {
     background-color: #003f7f; /* Темный цвет при нажатии */
     transform: scale(0.98); /* Легкое уменьшение кнопки */
 }
+
+#cartItemsContainer {
+    max-height: 300px;
+    max-width: 500px;
+    overflow-y: auto;
+    margin-top: 50px;
+    padding: 25px; /* Внутренний отступ внутри контейнера */
+}
+
+.popup {
+    position: fixed;
+    width: 500px;
+    max-height: 80%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Центрирование */
+    z-index: 10000; /* Убедитесь, что попап поверх других элементов */
+}
+
+.product-info {
+    display: flex; /* Включаем Flexbox */
+    justify-content: space-between; /* Распределяем элементы по краям */
+    align-items: center; /* Выравниваем по вертикали */
+    margin-top: 10px; /* Добавляем отступ сверху */
+}
+
+.product-price {
+    font-size: 18px; /* Настройка размера шрифта */
+    font-weight: bold; /* Делаем цену жирной */
+}
+#productList {
+    max-width: 800px; /* Максимальная ширина */
+}
+
     </style>
 </head>
 <body>
@@ -122,8 +150,8 @@ button:active {
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="submit" value="вход" class="submit-button" onclick="loginUser()">
-                                <a href="authorize.html" class="register-link">регистрация</a>
+                                <input type="submit" value="Войти" class="submit-button" onclick="loginUser()">
+                                <a href="authorize.html" class="register-link" style="width:100%">регистрация</a>
                             </td>
                         </tr>
                     </table>
@@ -172,7 +200,7 @@ button:active {
             </td>
     <!--Основной контент-->
             <td width="34%"  valign="center">
-                <div class="form-container">
+                <div class="form-container" >
                     <h2 class="form-title">Поиск по товарам</h2>
             
                     <!-- Фильтр выбора типа товара -->
@@ -435,21 +463,19 @@ function displayProducts(data) {
 
 // Fetch products and functions from API
 function fetchProducts() {
-    const productType = document.getElementById('productType').value; // Получаем тип товара
-    const searchQuery = document.getElementById('searchQuery').value.trim(); // Получаем поисковый запрос
+    const productType = document.getElementById('productType').value;
+    const searchQuery = document.getElementById('searchQuery').value.trim();
 
-    // Формируем URL запроса в зависимости от выбранного типа товара и поискового запроса
     let url = `${config.apiUrl}/${productType}?limit=10&offset=0`;
+    if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
 
-    if (searchQuery) {
-        url += `&search=${encodeURIComponent(searchQuery)}`;
-    }
-
-    // Выполняем запрос к API
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            displayProducts(data);
+            const filteredProducts = data.list.filter(product =>
+                product.name.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            displayProducts(filteredProducts);
         })
         .catch(error => {
             console.error('Ошибка:', error);
@@ -457,116 +483,36 @@ function fetchProducts() {
         });
 }
 
-// Функция для отображения товаров и других функций сайта
-function displayProducts(data) {
+function displayProducts(products) {
     const productList = document.getElementById('productList');
-    productList.innerHTML = ''; // Очистить список товаров перед отображением новых
+    productList.innerHTML = ''; // Очистка
 
-    // Check if we have a list of products
-    if (data.products && data.products.length === 0) {
+    if (!products || products.length === 0) {
         productList.innerHTML = '<p>Товары не найдены</p>';
         return;
     }
 
-    // Display products
-    if (data.list && data.list.length > 0) {
-        data.list.forEach(product => {
-            const productItem = document.createElement('div');
-            productItem.classList.add('product-item');
+    products.forEach(product => {
+        const productItem = document.createElement('div');
+        productItem.classList.add('product-item');
 
-            // Создаем карточку товара
-            productItem.innerHTML = `
-                <img src="http://localhost:5000${product.imagePath}" alt="${product.imagePath}">
-                <div class="product-title">${product.name}</div>
-                <div class="product-price">${product.price} ₽</div>
-                <button class="button" onclick="addItemToCart('${product.id}', '${product.name}', ${product.price}, '${product.imagePath}')">Добавить в корзину</button>
-            `;
+        productItem.innerHTML = `
+            <img src="http://localhost:5000${product.imagePath}" alt="${product.imagePath}">
+            <div class="product-title" style="width: 250px">${product.name}</div>
+            <div class="product-info">
+                <div class="product-price">${product.price}₽</div>
+            
+            </div>
+            <button class="button" style="width: 125px; margin-left: 50px; "onclick="addItemToCart('${product.id}', '${product.name}', ${product.price}, '${product.imagePath}')">Добавить в 
+                \n корзину</button>
+        `;
 
-            // Добавляем товар в список
-            productItem.addEventListener('click', () => {
-        openPopup(product);  // Открытие попапа с деталями радиатора
+        productItem.addEventListener('click', () => openPopup(product));
+
+        productList.appendChild(productItem);
     });
-            productList.appendChild(productItem);
-        });
-    }
-
-    
-    let input = document.getElementById('searchQuery').value.toLowerCase();
-    let mainContent = document.getElementById('mainContent');
-
-    // Убираем ранее выделенный текст
-    let cleanedContent = mainContent.innerHTML.replace(/<mark>(.*?)<\/mark>/g, '$1');
-
-    // Если поиск пустой, сбрасываем контент
-    if (input.length === 0) {
-        mainContent.innerHTML = cleanedContent;
-        return;
-    }
-
-    let regex = new RegExp(`(${input})`, 'gi'); // Создаем регулярное выражение для поиска текста
-
-    // Выделяем найденный текст
-    let highlightedContent = cleanedContent.replace(regex, '<mark>$1</mark>');
-    mainContent.innerHTML = highlightedContent;
-
-    // Поиск кнопок с совпадением текста
-    const buttons = document.querySelectorAll('button, a, .nav-button'); // Все кнопки и ссылки
-    const searchResults = [];
-
-    buttons.forEach(button => {
-        const buttonText = button.textContent.trim().toLowerCase();
-
-        // Если текст кнопки совпадает с поисковым запросом, добавляем её в результаты
-        if (buttonText.includes(input)) {
-            searchResults.push(button);
-        }
-    });
-
-    // Если найдены кнопки с совпадением, отображаем их как элементы поиска
-    if (searchResults.length > 0) {
-        const functionListContainer = document.createElement('div');
-        functionListContainer.classList.add('function-list-container');
-        
-        searchResults.forEach(button => {
-            const functionItem = document.createElement('div');
-            functionItem.classList.add('function-item');
-
-            // Создаем элемент для кнопки
-            functionItem.innerHTML = `
-                <button class="search-function-button">${button.textContent}</button>
-            `;
-
-            // Добавляем найденную кнопку в список
-            functionListContainer.appendChild(functionItem);
-        });
-
-        // Добавляем найденные элементы после товаров
-        productList.appendChild(functionListContainer);
-    }
-    /*// Display website functions (if provided)
-    if (data.functions && data.functions.length > 0) {
-        const functionListContainer = document.createElement('div');
-        functionListContainer.classList.add('function-list-container');
-
-        // Loop through functions and display each
-        data.functions.forEach(func => {
-            const functionItem = document.createElement('div');
-            functionItem.classList.add('function-item');
-
-            // Add function name or description
-            functionItem.innerHTML = `
-                <div class="function-title">${func.name}</div>
-                <div class="function-description">${func.description}</div>
-            `;
-
-            // Add the function to the list
-            functionListContainer.appendChild(functionItem);
-        });
-
-        // Append the functions container after products
-        productList.appendChild(functionListContainer);
-    }*/
 }
+
 window.displayProducts = displayProducts
 </script>
 

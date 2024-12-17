@@ -4,6 +4,95 @@
     <meta charset="UTF-8">
     <title>Магазин сантехники Фаренгейт</title>
     <link href="styles.css" rel="stylesheet" type="text/css">
+    <style>
+        * {box-sizing:border-box}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
+}
+
+/* Hide the images by default */
+.mySlides {
+  display: none;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  margin-top: -22px;
+  padding: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* Caption text */
+.text {
+  color: black;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+    </style>
 </head>
 <body>
     <table width="100%" align="center" class="header">
@@ -32,7 +121,7 @@
                         </tr>
                         <tr>
                             <td align="right">
-                                <input type="submit" value="вход" class="submit-button" onclick="loginUser()">
+                                <input type="submit" value="Войти" class="submit-button" onclick="loginUser()">
                                 <a href="authorize.html" class="register-link">регистрация</a>
                             </td>
                         </tr>
@@ -100,23 +189,45 @@
                     </div>
                 </div>
 
-                <div class="slider">
-                    <div class="slides">
-                      <div class="slide">
-                        <img src="source/carousel/carousel1.jpg" alt="Image 1">
-                      </div>
-                      <div class="slide">
-                        <img src="source/carousel/carousel2.jpg" alt="Image 2">
-                      </div>
-                      <div class="slide">
-                        <img src="source/carousel/carousel3.jpg" alt="Image 3">
-                      </div>
-                      <div class="slide">
-                        <img src="source/carousel/carousel 4.jpg" alt="Image 4">
-                      </div>
-                    </div>
-                </div>
+                <div class="slideshow-container">
 
+                    <!-- Full-width images with number and caption text -->
+                    <div class="mySlides fade">
+                      <div class="numbertext">1 / 3</div>
+                      <a href="chapters/chapter1.html">
+                      <img src="source/carousel/carousel1.jpg" style="width:100%">
+                      </a>
+                      <div class="text">Широкий ассортимент радиаторов</div>
+                    </div>
+                  
+                    <div class="mySlides fade">
+                      <div class="numbertext">2 / 3</div>
+                      <a href="chapters/chapter3.html">
+                      <img src="source/carousel/carousel2.jpg" style="width:100%">
+                      </a>
+                      <div class="text">Водонагреватели Haier</div>
+                    </div>
+                  
+                    <div class="mySlides fade">
+                        <div class="numbertext">3 / 3</div>
+                        <a href="chapters/chapter3.html">
+                        <img src="source/carousel/carousel 5.jpg" style="width:100%">
+                        </a>
+                        <div class="text">Выгодная цена на котлы</div>
+                      </div>
+                  
+                    <!-- Next and previous buttons -->
+                    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1)">&#10095;</a>
+                  </div>
+                  <br>
+                  
+                  <!-- The dots/circles -->
+                  <div style="text-align:center">
+                    <span class="dot" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                  </div>
     
                 <table border="0" width="100%" cellspacing="0" cellpadding="0">
                     
@@ -220,50 +331,74 @@
 <script type="module">
     import { searchText, loginUser, updateLoginBlock, logoutUser, openCartPopup, closeCartPopup } from './utility.js';
 
-    document.addEventListener('DOMContentLoaded', async function () {
-        await updateLoginBlock(); // Обновляем блок входа при загрузке
+    let slideIndex = 1; // Declare slideIndex globally
 
-        // Привязываем события к элементам
-        const loginButton = document.querySelector('.submit-button');
-        if (loginButton) {
-            loginButton.addEventListener('click', loginUser);
-        }
+// Show initial slide
+window.onload = function () {
+    showSlides(slideIndex);
+};
 
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.addEventListener('keyup', searchText);
-        }
+// Next/previous controls
+window.plusSlides = function (n) {
+    showSlides(slideIndex += n);
+};
 
-        const logoutButton = document.querySelector('.logout-button');
-        if (logoutButton) {
+// Thumbnail image controls
+window.currentSlide = function (n) {
+    showSlides(slideIndex = n);
+};
+
+// Function to control slides
+window.showSlides = function (n) {
+    let i;
+    let slides = document.getElementsByClassName("mySlides");
+    let dots = document.getElementsByClassName("dot");
+
+    if (n > slides.length) {
+        slideIndex = 1;
+    }
+    if (n < 1) {
+        slideIndex = slides.length;
+    }
+
+    for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+    }
+    for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+    }
+
+    slides[slideIndex - 1].style.display = "block";
+    dots[slideIndex - 1].className += " active";
+};
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    updateLoginBlock(); // Обновляем блок входа при загрузке
+
+    // Привязываем события к элементам
+    const loginButton = document.querySelector('.submit-button');
+    if (loginButton) {
+        loginButton.addEventListener('click', loginUser);
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', searchText);
+    }
+
+    const logoutButton = document.querySelector('.logout-button');
+    if (logoutButton) {
         logoutButton.addEventListener('click', logoutUser);
-        }
-
-        updateCarousel();
-    });
-
-    let currentIndex = 0;
-
-    function updateCarousel() {
-        const carouselImages = document.querySelector('.carousel-images');
-        const totalSlides = document.querySelectorAll('.carousel-image').length;
-        carouselImages.style.transform = `translateX(-${currentIndex * 100}%)`;
     }
 
-    function nextSlide() {
-        const totalSlides = document.querySelectorAll('.carousel-image').length;
-        currentIndex = (currentIndex + 1) % totalSlides;
-        updateCarousel();
-    }
+});
 
-    function prevSlide() {
-        const totalSlides = document.querySelectorAll('.carousel-image').length;
-        currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-        updateCarousel();
-    }
 
-    window.nextSlide = nextSlide;
-    window.prevSlide = prevSlide;
 </script>
+
+
 </body>
 </html>

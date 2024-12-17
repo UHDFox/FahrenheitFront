@@ -215,6 +215,14 @@ button:active {
                     <!-- Поисковый запрос -->
                     <label for="searchQuery">Поиск:</label>
                     <input type="text" id="searchQuery" class="form-input" placeholder="Введите название товара">
+                    <br>
+                    <br>
+                    <label for="minPrice">Цена от:</label>
+
+                    <input type="number" id="minPrice" class="form-input" placeholder="Минимальная цена">
+
+                    <label for="maxPrice">Цена до:</label>
+                    <input type="number" id="maxPrice" class="form-input" placeholder="Максимальная цена">
             
                     <!-- Кнопка для фильтрации -->
                     <button class="filter-button" onclick="fetchProducts()">Искать</button>
@@ -465,6 +473,8 @@ function displayProducts(data) {
 function fetchProducts() {
     const productType = document.getElementById('productType').value;
     const searchQuery = document.getElementById('searchQuery').value.trim();
+    const minPrice = parseFloat(document.getElementById('minPrice').value) || 0; // Минимальная цена
+    const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity; // Максимальная цена
 
     let url = `${config.apiUrl}/${productType}?limit=10&offset=0`;
     if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
@@ -474,6 +484,9 @@ function fetchProducts() {
         .then(data => {
             const filteredProducts = data.list.filter(product =>
                 product.name.toLowerCase().includes(searchQuery.toLowerCase())
+                &&
+                    product.price >= minPrice &&
+                    product.price <= maxPrice
             );
             displayProducts(filteredProducts);
         })

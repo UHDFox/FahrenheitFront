@@ -217,12 +217,13 @@ button:active {
                     <input type="text" id="searchQuery" class="form-input" placeholder="Введите название товара">
                     <br>
                     <br>
-                    <label for="minPrice">Цена от:</label>
+                    <label for="priceRange">Диапазон цены:</label>
+                    <div>
+                        <input type="range" id="minPriceSlider" min="0" max="100000" step="1000" value="0" oninput="updatePriceRange()">
+                        <input type="range" id="maxPriceSlider" min="0" max="100000" step="1000" value="100000" oninput="updatePriceRange()">
+                    </div>
+                    <p>Цена: <span id="priceRangeDisplay">0₽ - 100000₽</span></p>
 
-                    <input type="number" id="minPrice" class="form-input" placeholder="Минимальная цена">
-
-                    <label for="maxPrice">Цена до:</label>
-                    <input type="number" id="maxPrice" class="form-input" placeholder="Максимальная цена">
             
                     <!-- Кнопка для фильтрации -->
                     <button class="filter-button" onclick="fetchProducts()">Искать</button>
@@ -336,145 +337,30 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 });
 
-/*function fetchProducts() {
-            const productType = document.getElementById('productType').value; // Получаем тип товара
-            const searchQuery = document.getElementById('searchQuery').value.trim(); // Получаем поисковый запрос
+function updatePriceRange() {
+    const minPriceSlider = document.getElementById('minPriceSlider');
+    const maxPriceSlider = document.getElementById('maxPriceSlider');
+    const priceRangeDisplay = document.getElementById('priceRangeDisplay');
 
-            // Формируем URL запроса в зависимости от выбранного типа товара и поискового запроса
-            let url = `${config.apiUrl}/${productType}?limit=10&offset=0`;
+    let minPrice = parseInt(minPriceSlider.value);
+    let maxPrice = parseInt(maxPriceSlider.value);
 
-            if (searchQuery) {
-                url += `&search=${encodeURIComponent(searchQuery)}`;
-            }
-
-            // Выполняем запрос к API
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    displayProducts(data);
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    alert('Произошла ошибка при получении товаров');
-                });
-        }
-
-        // Функция для отображения товаров
-        function displayProducts(products) {
-            const productList = document.getElementById('productList');
-            productList.innerHTML = ''; // Очистить список товаров перед отображением новых
-
-            if (products.length === 0) {
-                productList.innerHTML = '<p>Товары не найдены</p>';
-                return;
-            }
-
-            // Перебор всех товаров и создание их карточек
-            products.list.forEach(product => {
-                const productItem = document.createElement('div');
-                productItem.classList.add('product-item');
-
-                // Создаем карточку товара
-                productItem.innerHTML = `
-                    <a href="${product.url}" target="_blank">
-                        <img src="${product.imagePath}" alt="${product.name}">
-                    </a>
-                    <div class="product-title">${product.name}</div>
-                    <div class="product-price">${product.price} ₽</div>
-                `;
-
-                // Добавляем товар в список
-                productList.appendChild(productItem);
-            });
-        }*/
-
-
-        // Fetch products and functions from API
-/*function fetchProducts() {
-    const productType = document.getElementById('productType').value; // Получаем тип товара
-    const searchQuery = document.getElementById('searchQuery').value.trim(); // Получаем поисковый запрос
-
-    // Формируем URL запроса в зависимости от выбранного типа товара и поискового запроса
-    let url = `${config.apiUrl}/${productType}?limit=10&offset=0`;
-
-    if (searchQuery) {
-        url += `&search=${encodeURIComponent(searchQuery)}`;
+    // Обеспечиваем, чтобы минимальная цена не превышала максимальную
+    if (minPrice > maxPrice) {
+        [minPrice, maxPrice] = [maxPrice, minPrice];
+        minPriceSlider.value = minPrice;
+        maxPriceSlider.value = maxPrice;
     }
 
-    // Выполняем запрос к API
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            displayProducts(data);
-        })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            alert('Произошла ошибка при получении товаров');
-        });
+    priceRangeDisplay.textContent = `${minPrice}₽ - ${maxPrice}₽`;
 }
-
-// Функция для отображения товаров и других функций сайта
-function displayProducts(data) {
-    const productList = document.getElementById('productList');
-    productList.innerHTML = ''; // Очистить список товаров перед отображением новых
-
-    // Check if we have a list of products
-    if (data.products && data.products.length === 0) {
-        productList.innerHTML = '<p>Товары не найдены</p>';
-        return;
-    }
-
-    // Display products
-    if (data.products && data.products.length > 0) {
-        data.products.forEach(product => {
-            const productItem = document.createElement('div');
-            productItem.classList.add('product-item');
-
-            // Создаем карточку товара
-            productItem.innerHTML = `
-                <a href="${product.url}" target="_blank">
-                    <img src="${product.imagePath}" alt="${product.name}">
-                </a>
-                <div class="product-title">${product.name}</div>
-                <div class="product-price">${product.price} ₽</div>
-            `;
-
-            // Добавляем товар в список
-            productList.appendChild(productItem);
-        });
-    }
-
-    // Display website functions (if provided)
-    if (data.functions && data.functions.length > 0) {
-        const functionListContainer = document.createElement('div');
-        functionListContainer.classList.add('function-list-container');
-
-        // Loop through functions and display each
-        data.functions.forEach(func => {
-            const functionItem = document.createElement('div');
-            functionItem.classList.add('function-item');
-
-            // Add function name or description
-            functionItem.innerHTML = `
-                <div class="function-title">${func.name}</div>
-                <div class="function-description">${func.description}</div>
-            `;
-
-            // Add the function to the list
-            functionListContainer.appendChild(functionItem);
-        });
-
-        // Append the functions container after products
-        productList.appendChild(functionListContainer);
-    }
-}*/
 
 // Fetch products and functions from API
 function fetchProducts() {
     const productType = document.getElementById('productType').value;
     const searchQuery = document.getElementById('searchQuery').value.trim();
-    const minPrice = parseFloat(document.getElementById('minPrice').value) || 0; // Минимальная цена
-    const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity; // Максимальная цена
+    const minPrice = parseFloat(document.getElementById('minPriceSlider').value);
+    const maxPrice = parseFloat(document.getElementById('maxPriceSlider').value);
 
     let url = `${config.apiUrl}/${productType}?limit=10&offset=0`;
     if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
@@ -527,6 +413,7 @@ function displayProducts(products) {
 }
 
 window.displayProducts = displayProducts
+window.updatePriceRange = updatePriceRange
 </script>
 
 

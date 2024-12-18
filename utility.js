@@ -278,8 +278,8 @@ export function openCartPopup() {
     checkoutButton.id = 'checkoutButton';
     checkoutButton.textContent = 'Оформить заказ';
     checkoutButton.addEventListener('click', () => {
-        clearCart();
-        checkout(); // Очистка корзины при нажатии на кнопку
+        checkout(); 
+        
     });
     
     const buttonContainer = document.createElement('div');
@@ -460,6 +460,7 @@ export function checkout() {
     } else {
         window.location.href = '/checkout.html'; // Переход на страницу оформления заказа
     }
+    localStorage.removeItem('cart');
 }
 
 

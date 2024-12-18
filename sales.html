@@ -158,12 +158,66 @@
 
 
 <script type="module">
-    import {searchText, loginUser} from './utility.js'
+    const config = {
+        apiUrl: 'http://localhost:5000/api'  // URL API для помп
+    };
 
-    document.addEventListener('DOMContentLoaded', function () {
-            document.querySelector('input[type="submit"]').addEventListener('click', loginUser);
-            document.getElementById('searchInput').addEventListener('keyup', searchText);
-    });
+    import { 
+    searchText, loginUser, updateLoginBlock, logoutUser, 
+    openCartPopup, closeCartPopup, addItemToCart, clearCart, 
+    decreaseItemQuantity, increaseItemQuantity 
+} from '/utility.js';
+document.addEventListener('DOMContentLoaded', async function () {
+    // Обновляем блок входа при загрузке
+    await updateLoginBlock();
+
+    // Привязываем события к элементам
+    const loginButton = document.querySelector('.submit-button');
+    if (loginButton) {
+        loginButton.addEventListener('click', loginUser);
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', searchText);
+    }
+
+    const logoutButton = document.querySelector('.logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logoutUser);
+    }
+
+    const addToCartButton = document.querySelector('.add-to-cart-button');
+    if (addToCartButton) {
+        addToCartButton.addEventListener('click', () => {
+            // Предполагается, что waterBoiler объект доступен здесь
+            if (typeof radiator !== 'undefined') {
+                addItemToCart(radiator.id, radiator.name, radiator.price, radiator.imagePath);
+            } else {
+                console.error("Объект не найден");
+            }
+        });
+    }
+
+    // Привязка событий для пагинации
+    const nextPageButton = document.getElementById('NextPageButton');
+    if (nextPageButton) {
+        nextPageButton.addEventListener('click', getNextPage);
+        console.log('NextPageButton найден и обработчик добавлен');
+    }
+
+    const prevPageButton = document.getElementById('PrevPageButton');
+    if (prevPageButton) {
+        prevPageButton.addEventListener('click', getPrevPage);
+        console.log('PrevPageButton найден и обработчик добавлен');
+    }
+});
+
+
+let offset = 0;  // Смещение для пагинации
+const limit = 4;  // Количество элементов на странице
+let pageCounter = 1;  // Счетчик текущей страницы
+let isLoading = false;  // Признак загрузки данных
 </script>
 </body>
 </html>

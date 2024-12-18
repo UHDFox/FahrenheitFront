@@ -25,6 +25,7 @@
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+            box-sizing: border-box
         }
         .register-button {
             width: 100%;
@@ -255,19 +256,72 @@
 
 
 <!-- JavaScript для поиска -->
-<script>
+<script type="module">
+    const config = {
+        apiUrl: 'http://localhost:5000/api'  // URL API для помп
+    };
 
-function openModal() {
+    import { 
+     loginUser, updateLoginBlock, logoutUser, 
+    openCartPopup, closeCartPopup, addItemToCart, clearCart, 
+    decreaseItemQuantity, increaseItemQuantity 
+} from '/utility.js';
+document.addEventListener('DOMContentLoaded', async function () {
+    // Обновляем блок входа при загрузке
+    await updateLoginBlock();
+
+    // Привязываем события к элементам
+    const loginButton = document.querySelector('.submit-button');
+    if (loginButton) {
+        loginButton.addEventListener('click', loginUser);
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', searchText);
+    }
+
+    const logoutButton = document.querySelector('.logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logoutUser);
+    }
+
+    const addToCartButton = document.querySelector('.add-to-cart-button');
+    if (addToCartButton) {
+        addToCartButton.addEventListener('click', () => {
+            // Предполагается, что waterBoiler объект доступен здесь
+            if (typeof radiator !== 'undefined') {
+                addItemToCart(radiator.id, radiator.name, radiator.price, radiator.imagePath);
+            } else {
+                console.error("Объект не найден");
+            }
+        });
+    }
+
+    // Привязка событий для пагинации
+    const nextPageButton = document.getElementById('NextPageButton');
+    if (nextPageButton) {
+        nextPageButton.addEventListener('click', getNextPage);
+        console.log('NextPageButton найден и обработчик добавлен');
+    }
+
+    const prevPageButton = document.getElementById('PrevPageButton');
+    if (prevPageButton) {
+        prevPageButton.addEventListener('click', getPrevPage);
+        console.log('PrevPageButton найден и обработчик добавлен');
+    }
+});
+window.openModal = function() {
     const modal = document.getElementById('pdfModal');
     modal.style.display = 'block';
 }
 
-function closeModal() {
+window.closeModal = function() {
     const modal = document.getElementById('pdfModal');
     modal.style.display = 'none';
 }
 
-function searchText() {
+window.searchText = function() {
     // Получаем введенный текст
     let input = document.getElementById('searchInput').value.toLowerCase();
     let mainContent = document.getElementById('mainContent');
@@ -292,7 +346,7 @@ function searchText() {
 }
 
 
-function registerUser() {
+window.registerUser = function(){
     // Получаем форму и значения полей
     const form = document.getElementById('registerForm');
     const name = form.name.value.trim(); 
@@ -354,59 +408,6 @@ function registerUser() {
 }
 
 
-
-function loginUser() {
-    // Получаем значения полей логина и пароля
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-
-    // Проверка на пустые поля
-    if (!email || !password) {
-        alert("Пожалуйста, заполните оба поля.");
-        return;
-    }
-
-    // Создаем тело запроса
-    const loginData = {
-        email: email,
-        password: password
-    };
-
-    // Отправка POST-запроса на API
-    fetch('http://localhost:5000/api/v1/User/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(loginData)
-    })
-    .then(response => {
-        if (response.status === 200) {
-            // Если ответ успешен (код 200), получаем токен
-            return response.text();  // Читаем тело ответа как текст (токен)
-        } else if (response.status === 500) {
-            // Если сервер возвращает статус 500, выводим сообщение об ошибке
-            alert("Ошибка: Неверные данные для входа.");
-            return Promise.reject("Unauthorized");
-        } else {
-            // В случае других статусов — выводим сообщение об ошибке
-            return response.text().then(error => {
-                alert("Ошибка входа: " + error);
-                return Promise.reject(error);
-            });
-        }
-    })
-    .then(token => {
-        if (token) {
-            // Если токен получен, сохраняем его в localStorage
-            localStorage.setItem('token', token);  // Сохраняем токен
-            alert("Вход выполнен успешно!");
-        }
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
-    });
-}
 
 
 

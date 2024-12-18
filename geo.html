@@ -157,14 +157,59 @@
     <p>© 2024 Магазин сантехники Фаренгейт. Все права защищены.</p>
 </div>
 <script type="module">
-    import {searchText, loginUser, toggleFeedbackForm} from './utility.js'
+    import { 
+    searchText, loginUser, updateLoginBlock, logoutUser, 
+    openCartPopup, closeCartPopup, addItemToCart, clearCart, 
+    decreaseItemQuantity, increaseItemQuantity 
+} from '/utility.js';
+document.addEventListener('DOMContentLoaded', async function () {
+    // Обновляем блок входа при загрузке
+    await updateLoginBlock();
 
-    document.addEventListener('DOMContentLoaded', function () {
-            document.querySelector('input[type="submit"]').addEventListener('click', loginUser);
-            document.getElementById('searchInput').addEventListener('keyup', searchText);
-    });
+    // Привязываем события к элементам
+    const loginButton = document.querySelector('.submit-button');
+    if (loginButton) {
+        loginButton.addEventListener('click', loginUser);
+    }
 
-    const form = document.getElementById('feedbackForm');
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', searchText);
+    }
+
+    const logoutButton = document.querySelector('.logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logoutUser);
+    }
+
+    const addToCartButton = document.querySelector('.add-to-cart-button');
+    if (addToCartButton) {
+        addToCartButton.addEventListener('click', () => {
+            // Предполагается, что waterBoiler объект доступен здесь
+            if (typeof pump !== 'undefined') {
+                addItemToCart(pump.id, pump.name, pump.price, pump.imagePath);
+            } else {
+                console.error("Объект камина не найден");
+            }
+        });
+    }
+
+    // Привязка событий для пагинации
+    const nextPageButton = document.getElementById('NextPageButton');
+    if (nextPageButton) {
+        nextPageButton.addEventListener('click', getNextPage);
+        console.log('NextPageButton найден и обработчик добавлен');
+    }
+
+    const prevPageButton = document.getElementById('PrevPageButton');
+    if (prevPageButton) {
+        prevPageButton.addEventListener('click', getPrevPage);
+        console.log('PrevPageButton найден и обработчик добавлен');
+    }
+});
+
+
+const form = document.getElementById('feedbackForm');
 
 // Listen for form submission
 if (form) {
